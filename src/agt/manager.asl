@@ -47,11 +47,20 @@
     }
   }
   .wait(200);
+  .findall(PoolId,focused(_,_[artifact_type("pgg.Pool")],PoolId),Pools);
+  !finish_pools(Pools);
   .broadcast(achieve,leave_pool);
   .wait(200);
-  .findall(PoolId,focused(_,_[artifact_type("pgg.Pool")],PoolId),Pools);
   !dispose_pools(Pools).
-  
+
++!finish_pools(L)
+  <-
+  ?factor(F);
+  for ( .member(PoolId, L) ) {
+    multiplyContributions(F)[artifact_id(PoolId)];
+    distributeEarnings[artifact_id(PoolId)];
+  }.
+
 +!dispose_pools([])
   <-
   .abolish(focused(_,_[artifact_type("pgg.Pool")],_)).
