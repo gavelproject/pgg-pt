@@ -7,7 +7,8 @@
    .concat(Me,".de_facto",DfName);
    makeArtifact(DfName,"gavel.jacamo.DeFacto",[],DfId);
    focus(DfId);
-   !acquire_capabilities.
+   !acquire_capabilities;
+   !detect.
    
 // goal sent by the manager
 +!focus_pool(PoolName)
@@ -37,6 +38,15 @@
   acquireCapability(C,File);
   .rename_apart(File,RenFile);
   .add_plan(RenFile).
+
++pool_member(Pool,Ag)
+  : .my_name(Me)
+    & .term2string(Me,MeStr)
+    & Ag == MeStr
+    & .random(X) & X >= 0.5
+  <-
+  contribute.
++pool_member(_,_).
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }
