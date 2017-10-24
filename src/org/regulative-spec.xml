@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<regulative-spec
+	xmlns="https://github.com/gavelproject/gavel"
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
+	xsi:schemaLocation="https://github.com/gavelproject/gavel
+	https://raw.githubusercontent.com/gavelproject/gavel/master/src/main/resources/xsd/regulative-spec.xsd">
+	
+	<norms>
+		<norm id="n1">
+			<activation>pool_member(Pool, Ag) &amp; timestep(T)</activation>
+			<issuer>manager</issuer>
+			<target>Ag</target>
+			<deactivation>false</deactivation>
+			<deadline>timestep(T+1)</deadline>
+			<content>obligation(contributed(Ag,Pool))</content>
+		</norm>
+	</norms>
+	<sanctions>
+		<sanction id="s1">
+			<condition>str1234</condition>
+			<category>
+				<purpose>punishment</purpose>
+				<issuer>formal</issuer>
+				<locus>self_directed</locus>
+				<mode>direct</mode>
+				<polarity>positive</polarity>
+				<discernability>noticeable</discernability>
+			</category>
+			<content>pay(agent,20)</content>
+		</sanction>
+	</sanctions>
+	<ns-links>
+		<ns-link status="enabled">
+			<nid>n1</nid>
+			<sid>s1</sid>
+		</ns-link>
+	</ns-links>
+</regulative-spec>
