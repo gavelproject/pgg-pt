@@ -48,6 +48,11 @@
   contribute.
 +pool_member(_,_).
 
++earning(E)
+  <-
+  ?tokens(T);
+  -+tokens(T+E).
+
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }
 { include("$jacamoJar/templates/org-obedient.asl") }
