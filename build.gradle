@@ -63,8 +63,8 @@ repositories {
 
 dependencies {
 	implementation 'org.jacamo:jacamo:latest.integration'
-	//implementation 'com.github.gavelproject:gavel-jacamo:master-SNAPSHOT'
-	implementation project(':gavel-jacamo')
+	implementation 'com.github.gavelproject:gavel-jacamo:master-SNAPSHOT'
+	//implementation project(':gavel-jacamo')
 }
 
 sourceSets {

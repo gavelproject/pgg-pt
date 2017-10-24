@@ -6,7 +6,8 @@
    .my_name(Me);
    .concat(Me,".de_facto",DfName);
    makeArtifact(DfName,"gavel.jacamo.DeFacto",[],DfId);
-   focus(DfId).
+   focus(DfId);
+   !acquire_capabilities.
    
 // goal sent by the manager
 +!focus_pool(PoolName)
@@ -23,9 +24,11 @@
 
 +!acquire_capabilities
   <-
+  ?focused(_,capability_board,_);
   ?capabilities(L);
   for ( .member(C,L) & C == "detector" | C == "evaluator" ) {
   	!acquire_capability(C);
+  	registerSelfAs(C);
   }. 
   
 // Acquire plans for capability C

@@ -6,8 +6,7 @@
   .all_names(Ags);
   .my_name(Me);
   .delete(Me,Ags,Players);
-  +players(Players);
-  .broadcast(achieve,acquire_capabilities).
+  +players(Players).
 
 +!start
   <- 
@@ -36,8 +35,8 @@
   NGroups = NAgs / GroupSize;
   
   for ( .range(I,1,NGroups) ) {
-  	.puts("  Group##{I}:");
-  	.concat("g",I,"ts",T,"pool",PoolName);
+    .puts("  Group##{I}:");
+    .concat("g",I,"ts",T,"pool",PoolName);
     makeArtifact(PoolName,"pgg.Pool",[],PoolId);
     focus(PoolId);
     for ( .range(J,(I-1)*GroupSize,I*GroupSize-1) ) {
