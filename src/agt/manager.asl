@@ -1,75 +1,136 @@
-!setup.
-!start.
+players([]).
+ngroups(_).
+pools([]).
+
+!setup_then_start.
+
+
++!setup_then_start
+  <-
+  !setup;
+  !start.
+
 
 +!setup
   <-
+  !list_players(L);
+  +players(L);
+  !create_pool_artifacts.
+
+
++!list_players(L)
+  <-
   .all_names(Ags);
   .my_name(Me);
-  .delete(Me,Ags,Players);
-  +players(Players).
+  .delete(Me,Ags,L).
+
+
++!create_pool_artifacts
+  : players(L) & .length(L,NP) & (NP > 0)
+  <-
+  ?group_size(GroupSize);
+  NGroups = NP / GroupSize;
+  +ngroups(NGroups);
+  for ( .range(I,1,NGroups) ) {
+    .concat("pool",I,PoolName);
+    makeArtifact(PoolName,"pgg.Pool",[],PoolId);
+    focus(PoolId);
+    !add_pool(PoolName,PoolId);
+  }.
+
+
+-!create_pool_artifacts
+  <-
+  .wait(100);
+  !create_pool_artifacts.
+
+
++!add_pool(PoolName,PoolId)
+  <-
+  ?pools(CurrentList);
+  .union(CurrentList,[pool(PoolName,PoolId)],NewList);
+  -+pools(NewList).
+
 
 +!start
   <- 
-  ?max_timesteps(Max);
+  ?max_rounds(Max);
   for ( .range(I,1,Max) ) {
-    !update_timestep;
-    !run_round;
+    !increment_round;
+    ?current_round(Round);
+    ?pool_duration(Duration);
+    !run_round(Round,Duration);
+    !wait_everyone_is_done_with(Round);
+    !clear_pools;
   }.
-  
-+!update_timestep
+
+
++!increment_round
   <-
-  ?timestep(OldT);
-  NewT=OldT+1;
-  -+timestep(NewT);
-  .puts("Timestep##{NewT}:");
-  .broadcast(untell,timestep(_));
-  .broadcast(tell,timestep(NewT)).
-  
-+!run_round
+  ?current_round(OldRound);
+  NewRound = OldRound + 1;
+  -+current_round(NewRound);
+  .puts("Round##{NewRound}:");
+  .broadcast(untell,current_round(_));
+  .broadcast(tell,current_round(NewRound)).
+
+
++!run_round(Round,Duration)
   <-
-  ?timestep(T);
-  ?players(L);
-  .shuffle(L,Shuffled);
-  .length(Shuffled, NAgs);
+  ?ngroups(NGroups);
   ?group_size(GroupSize);
-  NGroups = NAgs / GroupSize;
-  
-  for ( .range(I,1,NGroups) ) {
-    .puts("  Group##{I}:");
-    .concat("g",I,"ts",T,"pool",PoolName);
-    makeArtifact(PoolName,"pgg.Pool",[],PoolId);
-    focus(PoolId);
-    for ( .range(J,(I-1)*GroupSize,I*GroupSize-1) ) {
-      .nth(J,Shuffled,Ag);
-      addMember(Ag)[artifact_id(PoolId)];
-      .puts("    #{Ag}");
-      .send(Ag,achieve,focus_pool(PoolName));
+  !shuffled_players(Players);
+  ?pools(Pools);
+  for ( .range(I,0,NGroups-1) ) {
+    .nth(I,Pools,pool(PoolName,_));
+    setRound(Round)[artifact_name(PoolName)];
+    .puts("  Pool #{PoolName}:");
+    for ( .range(J,I*GroupSize,(I+1)*GroupSize-1) ) {
+      .nth(J,Players,Player);
+      addMember(Player)[artifact_name(PoolName)];
+      .puts("    #{Player}");
+      .send(Player,achieve,focus_pool(PoolName));
     }
-  }
-  .wait(200);
-  .findall(PoolId,focused(_,_[artifact_type("pgg.Pool")],PoolId),Pools);
-  !finish_pools(Pools);
-  .broadcast(achieve,leave_pool);
-  .wait(200);
-  !dispose_pools(Pools).
-
-+!finish_pools(L)
-  <-
-  ?factor(F);
-  for ( .member(PoolId, L) ) {
-    multiplyContributions(F)[artifact_id(PoolId)];
-    distributeEarnings[artifact_id(PoolId)];
+    run(Duration)[artifact_name(PoolName)];
   }.
 
-+!dispose_pools([])
+
++!shuffled_players(S)
   <-
-  .abolish(focused(_,_[artifact_type("pgg.Pool")],_)).
-+!dispose_pools([H|T])
+  ?players(L);
+  .shuffle(L,S).
+
+
++!wait_everyone_is_done_with(Round)
   <-
-  stopFocus(H);
-  disposeArtifact(H);
-  !dispose_pools(T).
+  .wait(everyone_done_with(Round));
+  -everyone_is_done_with(Round).
+
+
++done_with(_, Round)
+  : players(L)
+    & .length(L,NPlayers)
+    & .count(done_with(_,Round),C)
+    & C == NPlayers
+  <-
+  +everyone_is_done_with(Round).
+
+
++!clear_pools
+  <-
+  ?pools(Pools);
+  for ( .member(pool(_,PoolId),Pools)) {
+  	clear[artifact_id(PoolId)];
+  }.
+
+
++status("FINISHED")[artifact_id(PoolId)]
+  <-
+  ?benefit_factor(F);
+  multiplyContributions(F)[artifact_id(PoolId)];
+  disclosePayoff[artifact_id(PoolId)];
+  discloseContributions[artifact_id(PoolId)].
+
 
 { include("$jacamoJar/templates/common-cartago.asl") }
-{ include("$jacamoJar/templates/common-moise.asl") }
 { include("$jacamoJar/templates/org-obedient.asl") }

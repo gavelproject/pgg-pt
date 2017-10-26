@@ -8,28 +8,44 @@
 	
 	<norms>
 		<norm id="n1">
-			<activation>pool_member(Pool, Ag) &amp; timestep(T)</activation>
+			<activation>current_round(Round) &amp; pool_member(Player,Round)</activation>
 			<issuer>manager</issuer>
-			<target>Ag</target>
+			<target>Player</target>
 			<deactivation>false</deactivation>
-			<deadline>timestep(T+1)</deadline>
-			<content>obligation(contributed(Ag,Pool))</content>
+			<deadline>current_round(Round+1)</deadline>
+			<content>obligation(contributed(Player,Round))</content>
 		</norm>
 	</norms>
 	<sanctions>
-		<sanction id="s1">
-			<condition>str1234</condition>
-			<category>
-				<purpose>punishment</purpose>
-				<issuer>formal</issuer>
-				<locus>self_directed</locus>
-				<mode>direct</mode>
-				<polarity>positive</polarity>
-				<discernability>noticeable</discernability>
-			</category>
-			<content>pay(agent,20)</content>
-		</sanction>
-	</sanctions>
+        <sanction id="punishment">
+            <condition>cost_to_punish(C) &amp; tokens(T) &amp; C &lt;= T</condition>
+            <category>
+                <purpose>punishment</purpose>
+                <issuer>formal</issuer>
+                <locus>other_directed</locus>
+                <mode>direct</mode>
+                <polarity>negative</polarity>
+                <discernability>noticeable</discernability>
+            </category>
+            <content>punish(Target)</content>
+        </sanction>
+        <sanction id="gossip">
+            <condition>
+            	.my_name(Me) &amp; 
+            	player(P) &amp; 
+            	P \== Me &amp; 
+            	not pool_member(_,P)</condition>
+            <category>
+                <purpose>punishment</purpose>
+                <issuer>informal</issuer>
+                <locus>other_directed</locus>
+                <mode>direct</mode>
+                <polarity>negative</polarity>
+                <discernability>unnoticeable</discernability>
+            </category>
+            <content>gossip(P,Target)</content>
+        </sanction>
+    </sanctions>
 	<ns-links>
 		<ns-link status="enabled">
 			<nid>n1</nid>

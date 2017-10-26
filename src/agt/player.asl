@@ -1,58 +1,79 @@
-// Initial goal
+manager(manager).
+
 !start.
+
 
 +!start
    <- 
-   .my_name(Me);
+   !create_de_facto;
+   !acquire_capabilities.
+
+
++!create_de_facto
+  <-
+  .my_name(Me);
    .concat(Me,".de_facto",DfName);
    makeArtifact(DfName,"gavel.jacamo.DeFacto",[],DfId);
-   focus(DfId);
-   !acquire_capabilities;
-   !detect.
-   
+   focus(DfId).
+
+
++!acquire_capabilities
+  <-
+  ?focused(_,capability_board,_);
+  ?capabilities(L);
+  for ( .member(C,L) & (C == "detector" | C == "evaluator") ) {
+  	!acquire_capability(C);
+  	registerSelfAs(C);
+  }. 
+
+
+// Acquire plans for capability C
++!acquire_capability(C)
+  <-
+  acquireCapability(C,File);
+  .rename_apart(File,RenFile);
+  .add_plan(RenFile).
+
+
 // goal sent by the manager
 +!focus_pool(PoolName)
   <-
   lookupArtifact(PoolName,PoolId);
   focus(PoolId).
 
-// goal sent by the manager
-+!leave_pool
-  <-
-  ?focused(_,_[artifact_type("pgg.Pool")],PoolId);
-  stopFocus(PoolId);
-  .abolish(focused(_,_[artifact_type("pgg.Pool")],_)).
 
-+!acquire_capabilities
-  <-
-  ?focused(_,capability_board,_);
-  ?capabilities(L);
-  for ( .member(C,L) & C == "detector" | C == "evaluator" ) {
-  	!acquire_capability(C);
-  	registerSelfAs(C);
-  }. 
-  
-// Acquire plans for capability C
--!acquire_capability(C)
-  <-
-  acquireCapability(C,File);
-  .rename_apart(File,RenFile);
-  .add_plan(RenFile).
-
-+pool_member(Pool,Ag)
-  : .my_name(Me)
-    & .term2string(Me,MeStr)
-    & Ag == MeStr
++status("RUNNING")[artifact_id(PoolId)]
+  : current_round(Round)
+    & .my_name(Me)
+    & pool_member(Me,Round)
     & .random(X) & X >= 0.5
   <-
-  contribute.
-+pool_member(_,_).
+  !contribute(PoolId).
 
-+earning(E)
+
++!contribute(PoolId)
   <-
   ?tokens(T);
-  -+tokens(T+E).
+  ?contribution_cost(Cost);
+  -+tokens(T-Cost);
+  contribute[artifact_id(PoolId)].
+
+
++payoff(Payoff)
+  <-
+  ?tokens(T);
+  -+tokens(T+Payoff).
+
+
++status("FINISHED")[artifact_id(Pool)]
+  <-
+  !detect;
+  stopFocus(Pool);
+  .abolish(focused(_,_[artifact_type("pgg.Pool")],_));
+  ?current_round(Round);
+  .my_name(Me);
+  .send(manager,tell,done_with(Me,Round)).
+
 
 { include("$jacamoJar/templates/common-cartago.asl") }
-{ include("$jacamoJar/templates/common-moise.asl") }
 { include("$jacamoJar/templates/org-obedient.asl") }

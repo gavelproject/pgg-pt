@@ -25,16 +25,19 @@
 mas pgg {
     agent player {
     	instances: 	10
-    	beliefs: 	tokens(50),
-    				threshold(0.2)
+    	beliefs: 	contribution_cost(1),
+    				cost_to_punish(1),
+    				cost_being_punished(5),
+    				threshold(0.2),
+    				tokens(50)
     }
     agent manager {
-    	beliefs: 	group_size(5), 
-    				timestep(0),
-    				max_timesteps(10),
-    				factor(3),
-    				cost_to_punish(1),
-    				cost_being_punished(5)
+    	beliefs: 	benefit_factor(3),
+    				group_size(5), 
+    				current_round(0),
+    				max_rounds(10),
+    				pool_duration(2000),
+    				
     }
     
     workspace pgg {
