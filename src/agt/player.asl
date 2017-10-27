@@ -35,6 +35,9 @@ manager(manager).
   .add_plan(RenFile).
 
 
++current_round(Round) <- .abolish(current_round(Round-1)).
+
+
 // goal sent by the manager
 +!focus_pool(PoolName)
   <-
@@ -42,36 +45,35 @@ manager(manager).
   focus(PoolId).
 
 
-+status("RUNNING")[artifact_id(PoolId)]
-  : current_round(Round)
-    & .my_name(Me)
-    & pool_member(Me,Round)
-    & .random(X) & X >= 0.5
++pool_status("RUNNING")[artifact_id(PoolId)]
   <-
-  !contribute(PoolId).
+  if (.random(X) & X >= 0.5) {
+    !contribute(1,PoolId);
+  } else {
+    !contribute(0,PoolId);
+  }.
 
 
-+!contribute(PoolId)
++!contribute(Contribution,PoolId)
   <-
   ?tokens(T);
-  ?contribution_cost(Cost);
-  -+tokens(T-Cost);
-  contribute[artifact_id(PoolId)].
+  -+tokens(T-Contribution);
+  contribute(Contribution)[artifact_id(PoolId)].
 
 
-+payoff(Payoff)
++payoff(Payoff,_)
   <-
   ?tokens(T);
   -+tokens(T+Payoff).
 
 
-+status("FINISHED")[artifact_id(Pool)]
++pool_status("FINISHED")[artifact_id(Pool)]
   <-
   !detect;
   stopFocus(Pool);
   .abolish(focused(_,_[artifact_type("pgg.Pool")],_));
-  ?current_round(Round);
   .my_name(Me);
+  ?current_round(Round);
   .send(manager,tell,done_with(Me,Round)).
 
 

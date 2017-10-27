@@ -26,11 +26,12 @@ pools([]).
 
 
 +!create_pool_artifacts
-  : players(L) & .length(L,NP) & (NP > 0)
   <-
+  ?players(L);
+  .length(L,NP);
   ?group_size(GroupSize);
   NGroups = NP / GroupSize;
-  +ngroups(NGroups);
+  -+ngroups(NGroups);
   for ( .range(I,1,NGroups) ) {
     .concat("pool",I,PoolName);
     makeArtifact(PoolName,"pgg.Pool",[],PoolId);
@@ -57,9 +58,8 @@ pools([]).
   ?max_rounds(Max);
   for ( .range(I,1,Max) ) {
     !increment_round;
+    !run_round;
     ?current_round(Round);
-    ?pool_duration(Duration);
-    !run_round(Round,Duration);
     !wait_everyone_is_done_with(Round);
     !clear_pools;
   }.
@@ -71,12 +71,12 @@ pools([]).
   NewRound = OldRound + 1;
   -+current_round(NewRound);
   .puts("Round##{NewRound}:");
-  .broadcast(untell,current_round(_));
   .broadcast(tell,current_round(NewRound)).
 
 
-+!run_round(Round,Duration)
++!run_round
   <-
+  ?current_round(Round);
   ?ngroups(NGroups);
   ?group_size(GroupSize);
   !shuffled_players(Players);
@@ -91,7 +91,7 @@ pools([]).
       .puts("    #{Player}");
       .send(Player,achieve,focus_pool(PoolName));
     }
-    run(Duration)[artifact_name(PoolName)];
+    run[artifact_name(PoolName)];
   }.
 
 
@@ -103,7 +103,7 @@ pools([]).
 
 +!wait_everyone_is_done_with(Round)
   <-
-  .wait(everyone_done_with(Round));
+  .wait(everyone_is_done_with(Round));
   -everyone_is_done_with(Round).
 
 
@@ -124,12 +124,13 @@ pools([]).
   }.
 
 
-+status("FINISHED")[artifact_id(PoolId)]
++contributions_received[artifact_id(PoolId)]
   <-
   ?benefit_factor(F);
   multiplyContributions(F)[artifact_id(PoolId)];
   disclosePayoff[artifact_id(PoolId)];
-  discloseContributions[artifact_id(PoolId)].
+  discloseContributions[artifact_id(PoolId)];
+  finish[artifact_id(PoolId)].
 
 
 { include("$jacamoJar/templates/common-cartago.asl") }

@@ -1,21 +1,44 @@
-// CArtAgO artifact code for project pgg
-
+/*******************************************************************************
+ * MIT License
+ *
+ * Copyright (c) Igor Conrado Alves de Lima <igorcadelima@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *******************************************************************************/
 package pgg;
 
 import static jason.asSyntax.ASSyntax.createAtom;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import cartago.Artifact;
-import cartago.INTERNAL_OPERATION;
 import cartago.OPERATION;
 import jason.asSyntax.Atom;
 
 public class Pool extends Artifact {
+  private int round = 0;
+  private Set<Atom> members;
+  private Map<Atom, Integer> contributions;
+  private int totalContribution = 0;
 
   private enum Functor {
-    CONTRIBUTED, PAYOFF, POOL_MEMBER, STATUS;
+    CONTRIBUTION, CONTRIBUTIONS_RECEIVED, CURRENT_ROUND, PAYOFF, POOL_MEMBER, POOL_STATUS;
 
     @Override
     public String toString() {
@@ -23,19 +46,19 @@ public class Pool extends Artifact {
     }
   }
 
-  private int round;
-  private Set<Atom> members;
-  private Set<Atom> contributors;
-  private int totalContribution = 0;
-
   private enum Status {
     INACTIVE, RUNNING, FINISHED
   }
 
   public void init() {
     members = new HashSet<>();
-    contributors = new HashSet<>();
-    defineObsProperty(Functor.STATUS.toString(), Status.INACTIVE.toString());
+    contributions = new HashMap<>();
+    defineObsProperty(Functor.POOL_STATUS.toString(), Status.INACTIVE.toString());
+  }
+
+  @OPERATION
+  public void setRound(int round) {
+    this.round = round;
   }
 
   @OPERATION
@@ -46,56 +69,52 @@ public class Pool extends Artifact {
   }
 
   @OPERATION
-  public void contribute() {
+  public void contribute(int value) {
     String agName = getCurrentOpAgentId().getAgentName();
-    contributors.add(createAtom(agName));
+    totalContribution += value;
+    contributions.put(createAtom(agName), value);
+    if (contributions.size() == members.size()) {
+      signal(getCreatorId(), Functor.CONTRIBUTIONS_RECEIVED.toString());
+    }
   }
 
   @OPERATION
   public void multiplyContributions(int factor) {
-    totalContribution = contributors.size() * factor;
+    totalContribution *= factor;
   }
 
   @OPERATION
   public void disclosePayoff() {
     final float payoff = (float) totalContribution / members.size();
-    defineObsProperty(Functor.PAYOFF.toString(), payoff);
+    defineObsProperty(Functor.PAYOFF.toString(), payoff, round);
   }
 
   @OPERATION
   public void discloseContributions() {
-    contributors.forEach(contributor -> {
-      defineObsProperty(Functor.CONTRIBUTED.toString(), contributor, round);
+    contributions.forEach((player, value) -> {
+      defineObsProperty(Functor.CONTRIBUTION.toString(), player, value, round);
     });
   }
 
   @OPERATION
-  private void run(int duration) {
-    getObsProperty(Functor.STATUS.toString()).updateValue(Status.RUNNING.toString());
-    await_time(duration);
-    execInternalOp("finish");
+  private void run() {
+    getObsProperty(Functor.POOL_STATUS.toString()).updateValue(Status.RUNNING.toString());
   }
 
   @OPERATION
-  public void setRound(int round) {
-    this.round = round;
-  }
-
-  @INTERNAL_OPERATION
   public void finish() {
-    getObsProperty(Functor.STATUS.toString()).updateValue(Status.FINISHED.toString());
+    getObsProperty(Functor.POOL_STATUS.toString()).updateValue(Status.FINISHED.toString());
   }
 
   @OPERATION
   public void clear() {
     round = 0;
     members.clear();
-    contributors.clear();
+    contributions.clear();
     totalContribution = 0;
-    removeObsProperty(Functor.CONTRIBUTED.toString());
+    removeObsProperty(Functor.CONTRIBUTION.toString());
     removeObsProperty(Functor.PAYOFF.toString());
     removeObsProperty(Functor.POOL_MEMBER.toString());
-    getObsProperty(Functor.STATUS.toString()).updateValue(Status.INACTIVE.toString());;
+    getObsProperty(Functor.POOL_STATUS.toString()).updateValue(Status.INACTIVE.toString());
   }
 }
-

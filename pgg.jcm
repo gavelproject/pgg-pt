@@ -20,36 +20,33 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *******************************************************************************/
+ *******************************************************************************/ 
 
-mas pgg {
-    agent player {
-    	instances: 	10
-    	beliefs: 	contribution_cost(1),
-    				cost_to_punish(1),
-    				cost_being_punished(5),
-    				threshold(0.2),
-    				tokens(50)
-    }
-    agent manager {
-    	beliefs: 	benefit_factor(3),
-    				group_size(5), 
-    				current_round(0),
-    				max_rounds(10),
-    				pool_duration(2000),
-    				
-    }
-    
-    workspace pgg {
-        artifact de_jure: gavel.jacamo.DeJure("src/org/regulative-spec.xml") {
-        	focused-by: manager, player
-        }
-        artifact capability_board: gavel.jacamo.CapabilityBoard() {
-        	focused-by: manager, player
-        }
-    }
-    
-    // agent source path
-    asl-path: src/agt
-              src/agt/inc
+mas pgg { 
+	agent player {
+		instances:	10
+		beliefs: 	cost_to_punish(1),
+					cost_being_punished(5),
+					threshold(0.2),
+					tokens(50)
+	}
+	agent manager {
+		beliefs:	benefit_factor(3),
+					group_size(5),
+					current_round(0),
+					max_rounds(10)
+	}
+
+	workspace pgg { 
+		artifact de_jure: gavel.jacamo.DeJure("src/org/regulative-spec.xml") {
+			focused-by: manager,player
+		}
+		artifact capability_board: gavel.jacamo.CapabilityBoard() {
+			focused-by: manager,player
+		}
+	}
+
+	// agent source path
+	asl-path: 	src/agt
+				src/agt/inc
 }

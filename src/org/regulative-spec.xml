@@ -12,8 +12,8 @@
 			<issuer>manager</issuer>
 			<target>Player</target>
 			<deactivation>false</deactivation>
-			<deadline>current_round(Round+1)</deadline>
-			<content>obligation(contributed(Player,Round))</content>
+			<deadline>pool_status("FINISHED")</deadline>
+			<content>obligation(contribution(Player,Value,Round) &amp; Value == 1)</content>
 		</norm>
 	</norms>
 	<sanctions>
