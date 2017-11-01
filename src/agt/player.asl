@@ -22,7 +22,7 @@ manager(manager).
   <-
   ?focused(_,capability_board,_);
   ?capabilities(L);
-  for ( .member(C,L) & (C == "detector" | C == "evaluator" | C == "executor") ) {
+  for ( .member(C,L) ) {
   	!acquire_capability(C);
   	registerSelfAs(C);
   }. 
