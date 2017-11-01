@@ -102,5 +102,14 @@ manager(manager).
   SanctionDecisions = [Sanction].
 
 
++!gossip(Target,Move,Round)
+  <-
+  .puts("Gossip: #{Target}-#{Move}-#{Round}").
+
+
++!punish(Target,Round)
+  <-
+  .puts("Punishment: #{Target}-#{Round}").
+
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/org-obedient.asl") }
