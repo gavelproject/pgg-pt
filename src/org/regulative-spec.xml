@@ -13,12 +13,12 @@
 			<target>Player</target>
 			<deactivation>false</deactivation>
 			<deadline>pool_status("FINISHED")</deadline>
-			<content>obligation(contribution(Player,Value,Round) &amp; Value == 1)</content>
+			<content>obligation(contribution(Player,1,Round))</content>
 		</norm>
 	</norms>
 	<sanctions>
         <sanction id="punishment">
-            <condition>cost_to_punish(C) &amp; tokens(T) &amp; C &lt;= T</condition>
+            <condition>cost_to_punish(Cost) &amp; tokens(Tokens) &amp; Cost &lt;= Tokens</condition>
             <category>
                 <purpose>punishment</purpose>
                 <issuer>formal</issuer>
@@ -30,11 +30,7 @@
             <content>punish(Target)</content>
         </sanction>
         <sanction id="gossip">
-            <condition>
-            	.my_name(Me) &amp; 
-            	player(P) &amp; 
-            	P \== Me &amp; 
-            	not pool_member(_,P)</condition>
+            <condition>true</condition>
             <category>
                 <purpose>punishment</purpose>
                 <issuer>informal</issuer>
@@ -43,13 +39,17 @@
                 <polarity>negative</polarity>
                 <discernability>unnoticeable</discernability>
             </category>
-            <content>gossip(P,Target)</content>
+            <content>gossip(Target,freerider,Round)</content>
         </sanction>
     </sanctions>
 	<ns-links>
-		<ns-link status="enabled">
+		<ns-link>
 			<nid>n1</nid>
-			<sid>s1</sid>
+			<sid>punishment</sid>
+		</ns-link>
+		<ns-link>
+			<nid>n1</nid>
+			<sid>gossip</sid>
 		</ns-link>
 	</ns-links>
 </regulative-spec>
