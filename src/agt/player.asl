@@ -80,9 +80,14 @@ manager(manager).
 
 
 +!report(NormInstance)
-  : .my_name(Me) & evaluators(Evaluators) & .member(Me,Evaluators)
+  : .my_name(Me) &
+    evaluators(Evaluators) &
+    .member(Me,Evaluators)
   <-
-  !evaluate(NormInstance).
+  norm(_,_,_,_,target(Target),_,_,_)[H|T] = NormInstance;
+  if ( .member(violation_time(_),[H|T]) & Target \== Me) {
+    !evaluate(NormInstance);
+  }.
 
 
 +!decide_sanctions(NormInstance,SanctionDecisions)
