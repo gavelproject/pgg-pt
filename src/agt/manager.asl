@@ -28,9 +28,8 @@ pools([]).
 +!create_pool_artifacts
   <-
   ?players(L);
-  .length(L,NP);
   ?group_size(GroupSize);
-  NGroups = NP / GroupSize;
+  NGroups = .length(L) / GroupSize;
   -+ngroups(NGroups);
   for ( .range(I,1,NGroups) ) {
     .concat("pool",I,PoolName);
@@ -109,9 +108,7 @@ pools([]).
 
 +done_with(_, Round)
   : players(L)
-    & .length(L,NPlayers)
-    & .count(done_with(_,Round),C)
-    & C == NPlayers
+    & .count(done_with(_,Round)) == .length(L)
   <-
   +everyone_is_done_with(Round).
 
