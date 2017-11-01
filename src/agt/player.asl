@@ -1,12 +1,13 @@
 manager(manager).
 
+
 !start.
 
 
 +!start
-   <- 
-   !create_de_facto;
-   !acquire_capabilities.
+  <-
+  !create_de_facto;
+  !acquire_capabilities.
 
 
 +!create_de_facto
@@ -21,7 +22,7 @@ manager(manager).
   <-
   ?focused(_,capability_board,_);
   ?capabilities(L);
-  for ( .member(C,L) & (C == "detector" | C == "evaluator") ) {
+  for ( .member(C,L) & (C == "detector" | C == "evaluator" | C == "executor") ) {
   	!acquire_capability(C);
   	registerSelfAs(C);
   }. 
@@ -30,9 +31,9 @@ manager(manager).
 // Acquire plans for capability C
 +!acquire_capability(C)
   <-
-  acquireCapability(C,File);
-  .rename_apart(File,RenFile);
-  .add_plan(RenFile).
+  acquireCapability(C,Plan);
+//  .rename_apart(Plan,RenamedPlan);
+  .add_plan(Plan).
 
 
 +current_round(Round) <- .abolish(current_round(Round-1)).
@@ -69,12 +70,31 @@ manager(manager).
 
 +pool_status("FINISHED")[artifact_id(Pool)]
   <-
-  !detect;
+  ?current_round(Round);
+  .wait(.count(contribution(_,_,Round)) == .count(pool_member(_,Round)) );
+  !detect_normative_events;
   stopFocus(Pool);
   .abolish(focused(_,_[artifact_type("pgg.Pool")],_));
   .my_name(Me);
-  ?current_round(Round);
   .send(manager,tell,done_with(Me,Round)).
+
+
++!report(NormInstance)
+  : .my_name(Me) & evaluators(Evaluators) & .member(Me,Evaluators)
+  <-
+  !evaluate(NormInstance).
+
+
++!decide_sanctions(NormInstance,SanctionDecisions)
+  <-
+  !active_sanctions_for(NormInstance,Options);
+  .random(X);
+  if (X < 0.5) {
+    .nth(0,Options,Sanction);
+  } else {
+    .nth(1,Options,Sanction);
+  }
+  SanctionDecisions = [Sanction].
 
 
 { include("$jacamoJar/templates/common-cartago.asl") }
