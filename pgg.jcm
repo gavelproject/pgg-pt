@@ -28,7 +28,8 @@ mas pgg {
 		beliefs: 	cost_to_punish(1),
 					cost_being_punished(5),
 					threshold(0.2),
-					tokens(50)
+					tokens(50),
+					max_rounds_until_outcome(2)
 	}
 	agent manager {
 		beliefs:	benefit_factor(3),
