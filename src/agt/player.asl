@@ -1,13 +1,13 @@
 manager(manager).
 sanctions_in_round(0).
 
-
 !start.
 
 
 +!start
   <-
   !create_de_facto;
+  !create_img_db;
   !acquire_capabilities.
 
 
@@ -17,6 +17,16 @@ sanctions_in_round(0).
    .concat(Me,".de_facto",DfName);
    makeArtifact(DfName,"gavel.jacamo.DeFacto",[],DfId);
    focus(DfId).
+
+
++!create_img_db
+  <-
+  .my_name(Me);
+   .concat(Me,".img_db",DbName);
+   ?weight_gossip_img(WG);
+   ?weight_interaction_img(WI);
+   makeArtifact(DbName,"pgg.ImageDb",[WG,WI],DbId);
+   focus(DbId).
 
 
 +!acquire_capabilities
@@ -69,17 +79,6 @@ sanctions_in_round(0).
   -+tokens(T+Payoff).
 
 
-+pool_status("FINISHED")[artifact_id(Pool)]
-  <-
-  ?current_round(Round);
-  .wait(.count(contribution(_,_,Round)) == .count(pool_member(_,Round)) );
-  !detect_normative_events;
-  stopFocus(Pool);
-  .abolish(focused(_,_[artifact_type("pgg.Pool")],_));
-  .my_name(Me);
-  .send(manager,tell,done_with(Me,Round)).
-
-
 +pool_status("FINISHED")[artifact_id(PoolId)]
   <-
   !update_imgs;
@@ -92,6 +91,14 @@ sanctions_in_round(0).
   .wait(sanctions_in_round(NFreeriders));
 
   !get_done_with_round(Round,PoolId).
+
+
++!update_imgs
+  <-
+  ?current_round(Round);
+  for ( contribution(Player,Value,Round) ) {
+    addInteraction(Player,Round,Value); // add and observes new img
+  }.
 
 
 +sanction_application(_,_,_,_)
@@ -125,7 +132,7 @@ sanctions_in_round(0).
   <-
   !active_sanctions_for(NormInstance,Options);
   .random(X);
-  if (X < 0.5) {
+  if (X < 0.5 | .length(Options) == 1) {
     .nth(0,Options,Sanction);
   } else {
     .nth(1,Options,Sanction);
@@ -133,14 +140,31 @@ sanctions_in_round(0).
   SanctionDecisions = [Sanction].
 
 
++gossip(Target,ImgValue)[source(Sender)]
+  <-
+  putGossip(Target,Sender,ImgValue).
+
+
 +!gossip(Target,Move,Round)
   <-
-  .puts("Gossip: #{Target}-#{Move}-#{Round}").
+  !players_from_other_groups(Round,ReceiverOptions);
+  .shuffle(ReceiverOptions,Shuffled);
+  .nth(0,Shuffled,Receiver);
+  ?overall_img(Target,ImgValue);
+  .send(Receiver,tell,gossip(Target,ImgValue)).
+
+
++!players_from_other_groups(Round,Result)
+  <-
+  .all_names(Ags);
+  .delete(manager,Ags,Players);
+  .findall(Player,.member(Player,Players) & not pool_member(Player,Round),Result).
 
 
 +!punish(Target,Round)
   <-
   .puts("Punishment: #{Target}-#{Round}").
+
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/org-obedient.asl") }
