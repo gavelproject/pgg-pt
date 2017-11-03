@@ -1,4 +1,5 @@
 manager(manager).
+sanctions_in_round(0).
 
 
 !start.
@@ -77,6 +78,36 @@ manager(manager).
   .abolish(focused(_,_[artifact_type("pgg.Pool")],_));
   .my_name(Me);
   .send(manager,tell,done_with(Me,Round)).
+
+
++pool_status("FINISHED")[artifact_id(PoolId)]
+  <-
+  !update_imgs;
+  ?current_round(Round);
+  .wait(.count(contribution(_,_,Round)) == .count(pool_member(_,Round)) );
+  !detect_normative_events;
+
+  // Wait for all sanctions to be applied
+  NFreeriders = .count(contribution(P,0,Round) & not .my_name(P));
+  .wait(sanctions_in_round(NFreeriders));
+
+  !get_done_with_round(Round,PoolId).
+
+
++sanction_application(_,_,_,_)
+  <-
+  ?sanctions_in_round(NSanctions);
+  -+sanctions_in_round(NSanctions+1).
+
+
++!get_done_with_round(Round,PoolId)
+  <-
+  stopFocus(PoolId);
+  .abolish(focused(_,_[artifact_id(PoolId)],_));
+  .my_name(Me);
+  ?manager(Manager)
+  .send(Manager,tell,done_with(Me,Round));
+  -+sanctions_in_round(0).
 
 
 +!report(NormInstance)
