@@ -145,6 +145,13 @@ sanctions_in_round(0).
   putGossip(Target,Sender,ImgValue).
 
 
++!punish_myself(Round)
+  <-
+  ?cost_being_punished(Cost);
+  ?tokens(OldAmount);
+  -+tokens(OldAmount-Cost).
+
+
 +!gossip(Target,Move,Round)
   <-
   !players_from_other_groups(Round,ReceiverOptions);
@@ -163,7 +170,10 @@ sanctions_in_round(0).
 
 +!punish(Target,Round)
   <-
-  .puts("Punishment: #{Target}-#{Round}").
+  ?cost_to_punish(Cost);
+  ?tokens(OldAmount);
+  -+tokens(OldAmount-Cost);
+  .send(Target,achieve,punish_myself(Round)).
 
 
 { include("$jacamoJar/templates/common-cartago.asl") }
