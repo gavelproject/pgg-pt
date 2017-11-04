@@ -1,6 +1,7 @@
 manager(manager).
 sanctions_in_round(0).
 
+
 !start.
 
 
@@ -103,6 +104,11 @@ sanctions_in_round(0).
 
 +sanction_application(_,_,_,_)
   <-
+  !increase_sanctions_in_round.
+
+
++!increase_sanctions_in_round
+  <-
   ?sanctions_in_round(NSanctions);
   -+sanctions_in_round(NSanctions+1).
 
@@ -126,18 +132,6 @@ sanctions_in_round(0).
   if ( .member(violation_time(_),[H|T]) & Target \== Me) {
     !evaluate(NormInstance);
   }.
-
-
-+!decide_sanctions(NormInstance,SanctionDecisions)
-  <-
-  !active_sanctions_for(NormInstance,Options);
-  .random(X);
-  if (X < 0.5 | .length(Options) == 1) {
-    .nth(0,Options,Sanction);
-  } else {
-    .nth(1,Options,Sanction);
-  }
-  SanctionDecisions = [Sanction].
 
 
 +gossip(Target,ImgValue)[source(Sender)]
@@ -176,5 +170,6 @@ sanctions_in_round(0).
   .send(Target,achieve,punish_myself(Round)).
 
 
+{ include("sanction_strategies.asl") }
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/org-obedient.asl") }
