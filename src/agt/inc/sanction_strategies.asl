@@ -1,3 +1,23 @@
+// punishment/gossip only strategy
++!decide_sanctions(NormInstance,SanctionDecisions)
+  : sanction_strategy(S) & (S == gossip | S == punishment)
+  <-
+  !active_sanctions_for(NormInstance,Options);
+  Sanction = sanction(
+    id(S),
+    status(enabled),
+    condition(Condition),
+    Category,
+    content(Content)
+  );
+  if ( .member(Sanction,Options) ) {
+    SanctionDecisions = [Sanction];
+  } else {
+    SanctionDecisions = [];
+    !increase_sanctions_in_round;
+  }.
+
+
 // random_choice/random_threshold strategies
 +!decide_sanctions(NormInstance,SanctionDecisions)
   : sanction_strategy(S) & (S == random_choice | S == random_threshold)

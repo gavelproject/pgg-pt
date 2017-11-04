@@ -28,8 +28,10 @@ mas pgg {
 		beliefs: 	cost_to_punish(1),
 					cost_being_punished(5),
 					max_rounds_until_outcome(2),
-					// random_choice/random_threshold
-					sanction_strategy(random_threshold),
+					
+					// gossip/punishment/random_choice/random_threshold
+					sanction_strategy(gossip),
+					
 					threshold(0.2),
 					tokens(50),
 					weight_interaction_img(0.8),
