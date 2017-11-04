@@ -1,4 +1,4 @@
-// random_choice strategy
+// random_choice/random_threshold strategies
 +!decide_sanctions(NormInstance,SanctionDecisions)
   : sanction_strategy(S) & (S == random_choice | S == random_threshold)
   <-
@@ -26,3 +26,24 @@
   } else {
     .nth(1,Options,Sanction);
   }.
+
+
+// random_threshold sanction strategy
++!apply_strategy(Options,Sanction)
+  : sanction_strategy(random_threshold)
+  <-
+  .random(Threshold);
+  .random(X);
+  if (X < Threshold) {
+    S = gossip;
+  } else {
+    S = punishment;
+  }
+  Sanction = sanction(
+    id(S),
+    status(enabled),
+    condition(Condition),
+    Category,
+    content(Content)
+  )
+  .member(Sanction,Options).
