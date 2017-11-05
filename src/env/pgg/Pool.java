@@ -108,13 +108,17 @@ public class Pool extends Artifact {
 
   @OPERATION
   public void clear() {
-    round = 0;
-    members.clear();
-    contributions.clear();
-    totalContribution = 0;
-    removeObsProperty(Functor.CONTRIBUTION.toString());
-    removeObsProperty(Functor.PAYOFF.toString());
-    removeObsProperty(Functor.POOL_MEMBER.toString());
+    if (!members.isEmpty()) {
+      for (int i = 0; i < members.size(); i++) {
+        removeObsProperty(Functor.CONTRIBUTION.toString());
+        removeObsProperty(Functor.POOL_MEMBER.toString());
+      }
+      removeObsProperty(Functor.PAYOFF.toString());
+      round = 0;
+      members.clear();
+      contributions.clear();
+      totalContribution = 0;
+    }
     getObsProperty(Functor.POOL_STATUS.toString()).updateValue(Status.INACTIVE.toString());
   }
 }
