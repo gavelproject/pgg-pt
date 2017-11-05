@@ -84,7 +84,7 @@ pools([]).
     .nth(I,Pools,pool(PoolName,_));
     setRound(Round)[artifact_name(PoolName)];
     .puts("  Pool #{PoolName}:");
-    for ( .range(J,I*GroupSize,(I+1)*GroupSize-1) ) {
+    for ( .range(J,I*GroupSize,(I+1)*GroupSize-1) & J < .length(Players) ) {
       .nth(J,Players,Player);
       addMember(Player)[artifact_name(PoolName)];
       .puts("    #{Player}");
