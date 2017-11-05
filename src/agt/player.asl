@@ -109,11 +109,6 @@ sanctions_in_round(0).
   }.
 
 
-+sanction_application(_,_,_,_)
-  <-
-  !increase_sanctions_in_round.
-
-
 +!increase_sanctions_in_round
   <-
   ?sanctions_in_round(NSanctions);
@@ -174,7 +169,8 @@ sanctions_in_round(0).
   .shuffle(ReceiverOptions,Shuffled);
   .nth(0,Shuffled,Receiver);
   ?overall_img(Target,ImgValue);
-  .send(Receiver,tell,gossip(Target,ImgValue)).
+  .send(Receiver,tell,gossip(Target,ImgValue));
+  !increase_sanctions_in_round.
 
 
 +!punish(Target,Round)
@@ -185,7 +181,8 @@ sanctions_in_round(0).
   .all_names(Ags);
   if ( .member(Target,Ags) ) {
     .send(Target,achieve,punish_myself(Round));
-  }.
+  }
+  !increase_sanctions_in_round.
 
 
 { include("sanction_strategies.asl") }
