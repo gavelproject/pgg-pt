@@ -186,5 +186,6 @@ sanctions_in_round(0).
 
 
 { include("sanction_strategies.asl") }
+{ include("controller_strategy.asl") }
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/org-obedient.asl") }

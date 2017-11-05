@@ -27,10 +27,16 @@ mas pgg {
 		instances:	10
 		beliefs: 	cost_to_punish(1),
 					cost_being_punished(5),
-					max_rounds_until_outcome(2),
+					
+					/**
+					 * Consider efficacy of a sanction application as
+					 * 'indeterminate' after the given number of rounds
+					 * has passed since its application.
+					 */
+					indeterminate_efficacy_after(2),
 					
 					// gossip/punishment/random_choice/random_threshold
-					sanction_strategy(gossip),
+					sanction_strategy(random_choice),
 					
 					threshold(0.2),
 					tokens(50),
