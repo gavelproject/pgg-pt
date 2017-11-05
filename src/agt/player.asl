@@ -58,6 +58,13 @@ sanctions_in_round(0).
   focus(PoolId).
 
 
++!players_from_other_groups(Round,Result)
+  <-
+  .all_names(Ags);
+  .delete(manager,Ags,Players);
+  .findall(Player,.member(Player,Players) & not pool_member(Player,Round),Result).
+
+
 +pool_status("RUNNING")[artifact_id(PoolId)]
   <-
   if (.random(X) & X >= 0.5) {
@@ -91,14 +98,14 @@ sanctions_in_round(0).
   NFreeriders = .count(contribution(P,0,Round) & not .my_name(P));
   .wait(sanctions_in_round(NFreeriders));
 
-  !get_done_with_round(Round,PoolId).
+  !done_with_round(Round,PoolId).
 
 
 +!update_imgs
   <-
   ?current_round(Round);
   for ( contribution(Player,Value,Round) ) {
-    addInteraction(Player,Round,Value); // add and observes new img
+    addInteraction(Player,Round,Value);
   }.
 
 
@@ -113,14 +120,29 @@ sanctions_in_round(0).
   -+sanctions_in_round(NSanctions+1).
 
 
-+!get_done_with_round(Round,PoolId)
++!done_with_round(Round,PoolId)
   <-
   stopFocus(PoolId);
   .abolish(focused(_,_[artifact_id(PoolId)],_));
+  -+sanctions_in_round(0);
   .my_name(Me);
-  ?manager(Manager)
-  .send(Manager,tell,done_with(Me,Round));
-  -+sanctions_in_round(0).
+  ?manager(Manager);
+  if ( tokens(T) & T < 0 ) {
+    !prepare_for_death;
+    .send(Manager,tell,in_death_row(Me));
+  }
+  .send(Manager,tell,done_with(Me,Round)).
+
+
++!prepare_for_death
+  <-
+  .my_name(Me);
+  .concat(Me,".img_db",ImgDbName);
+  lookupArtifact(ImgDbName,ImgDbId);
+  disposeArtifact(ImgDbId);
+  .concat(Me,".de_facto",DfName);
+  lookupArtifact(DfName,DfId);
+  disposeArtifact(DfId).
 
 
 +!report(NormInstance)
@@ -155,19 +177,15 @@ sanctions_in_round(0).
   .send(Receiver,tell,gossip(Target,ImgValue)).
 
 
-+!players_from_other_groups(Round,Result)
-  <-
-  .all_names(Ags);
-  .delete(manager,Ags,Players);
-  .findall(Player,.member(Player,Players) & not pool_member(Player,Round),Result).
-
-
 +!punish(Target,Round)
   <-
   ?cost_to_punish(Cost);
   ?tokens(OldAmount);
   -+tokens(OldAmount-Cost);
-  .send(Target,achieve,punish_myself(Round)).
+  .all_names(Ags);
+  if ( .member(Target,Ags) ) {
+    .send(Target,achieve,punish_myself(Round));
+  }.
 
 
 { include("sanction_strategies.asl") }

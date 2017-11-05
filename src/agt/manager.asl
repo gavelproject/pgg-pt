@@ -59,7 +59,8 @@ pools([]).
     !increment_round;
     !run_round;
     ?current_round(Round);
-    !wait_everyone_is_done_with(Round);
+    !wait_until_all_done(Round);
+    !kill_players_in_death_row;
     !clear_pools;
   }.
 
@@ -100,17 +101,27 @@ pools([]).
   .shuffle(L,S).
 
 
-+!wait_everyone_is_done_with(Round)
++!wait_until_all_done(Round)
   <-
-  .wait(everyone_is_done_with(Round));
-  -everyone_is_done_with(Round).
+  .wait(all_done(Round));
+  -all_done(Round).
 
 
-+done_with(_, Round)
-  : players(L)
-    & .count(done_with(_,Round)) == .length(L)
++done_with(_,Round)
+  : players(L) & .count(done_with(_,Round)) == .length(L)
   <-
-  +everyone_is_done_with(Round).
+  +all_done(Round).
+
+
++!kill_players_in_death_row
+  <-
+  for ( in_death_row(Player) ) {
+    .kill_agent(Player);
+    .abolish(in_death_row(Player));
+  }
+  !list_players(UpdatedList);
+  -+players(UpdatedList);
+  .wait(not in_death_row(_)).
 
 
 +!clear_pools
