@@ -18,11 +18,11 @@
 	</norms>
 	<sanctions>
         <sanction id="punishment">
-            <condition>
-            	current_round(Round) &amp;
-            	cost_to_punish(Cost) &amp;
-            	tokens(Tokens) &amp;
-            	Cost &lt;= Tokens</condition>
+            <activation>
+				cost_to_punish(Cost) &amp;
+				tokens(Tokens) &amp;
+				Cost &lt;= Tokens
+            </activation>
             <category>
                 <purpose>punishment</purpose>
                 <issuer>formal</issuer>
@@ -34,7 +34,7 @@
             <content>punish(Target,Round)</content>
         </sanction>
         <sanction id="gossip">
-            <condition>current_round(Round)</condition>
+            <activation>current_round(Round)</activation>
             <category>
                 <purpose>punishment</purpose>
                 <issuer>informal</issuer>

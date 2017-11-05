@@ -6,7 +6,7 @@
   Sanction = sanction(
     id(S),
     status(enabled),
-    condition(Condition),
+    activation(Activation),
     Category,
     content(Content)
   );
@@ -62,7 +62,7 @@
   Sanction = sanction(
     id(S),
     status(enabled),
-    condition(Condition),
+    activation(Activation),
     Category,
     content(Content)
   )
