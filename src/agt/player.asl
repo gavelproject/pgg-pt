@@ -70,7 +70,7 @@ weight_gossip_img(0.2).
   <-
   .my_name(Me);
   ?manager(Manager);
-  .send(Manager,tell,done_with(Me,0)).
+  .send(Manager,tell,done(Me)).
 
 
 +current_round(Round) <- .abolish(current_round(Round-1)).
@@ -83,11 +83,11 @@ weight_gossip_img(0.2).
   focus(PoolId).
 
 
-+!players_from_other_groups(Round,Result)
++!players_from_other_groups(Result)
   <-
   .all_names(Ags);
   .delete(manager,Ags,Players);
-  .findall(Player,.member(Player,Players) & not pool_member(Player,Round),Result).
+  .findall(Player,.member(Player,Players) & not pool_member(Player),Result).
 
 
 +pool_status("RUNNING")[artifact_id(PoolId)]
@@ -115,21 +115,19 @@ weight_gossip_img(0.2).
 +pool_status("FINISHED")[artifact_id(PoolId)]
   <-
   !update_imgs;
-  ?current_round(Round);
-  .wait(.count(contribution(_,_,Round)) == .count(pool_member(_,Round)) );
+  .wait(.count(contribution(_,_)) == .count(pool_member(_)) );
   !detect_normative_events;
 
   // Wait for all sanctions to be applied
-  NFreeriders = .count(contribution(P,0,Round) & not .my_name(P));
+  NFreeriders = .count(contribution(P,0) & not .my_name(P));
   .wait(sanctions_in_round(NFreeriders));
-
-  !done_with_round(Round,PoolId).
+  !done(PoolId).
 
 
 +!update_imgs
   <-
   ?current_round(Round);
-  for ( contribution(Player,Value,Round) ) {
+  for ( contribution(Player,Value) ) {
     addInteraction(Player,Round,Value);
   }.
 
@@ -140,7 +138,7 @@ weight_gossip_img(0.2).
   -+sanctions_in_round(NSanctions+1).
 
 
-+!done_with_round(Round,PoolId)
++!done(PoolId)
   <-
   stopFocus(PoolId);
   .abolish(focused(_,_[artifact_id(PoolId)],_));
@@ -151,7 +149,7 @@ weight_gossip_img(0.2).
     !prepare_for_death;
     .send(Manager,tell,in_death_row(Me));
   }
-  .send(Manager,tell,done_with(Me,Round)).
+  .send(Manager,tell,done(Me)).
 
 
 +!prepare_for_death
@@ -181,16 +179,16 @@ weight_gossip_img(0.2).
   putGossip(Target,Sender,ImgValue).
 
 
-+!punish_myself(Round)
++!punish_myself
   <-
   ?cost_being_punished(Cost);
   ?tokens(OldAmount);
   -+tokens(OldAmount-Cost).
 
 
-+!gossip(Target,Move,Round)
++!gossip(Target,Move)
   <-
-  !players_from_other_groups(Round,ReceiverOptions);
+  !players_from_other_groups(ReceiverOptions);
   .shuffle(ReceiverOptions,Shuffled);
   .nth(0,Shuffled,Receiver);
   ?overall_img(Target,ImgValue);
@@ -198,14 +196,14 @@ weight_gossip_img(0.2).
   !increase_sanctions_in_round.
 
 
-+!punish(Target,Round)
++!punish(Target)
   <-
   ?cost_to_punish(Cost);
   ?tokens(OldAmount);
   -+tokens(OldAmount-Cost);
   .all_names(Ags);
   if ( .member(Target,Ags) ) {
-    .send(Target,achieve,punish_myself(Round));
+    .send(Target,achieve,punish_myself);
   }
   !increase_sanctions_in_round.
 

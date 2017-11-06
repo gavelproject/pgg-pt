@@ -32,13 +32,12 @@ import cartago.OPERATION;
 import jason.asSyntax.Atom;
 
 public class Pool extends Artifact {
-  private int round = 0;
   private Set<Atom> members;
   private Map<Atom, Integer> contributions;
   private int totalContribution = 0;
 
   private enum Functor {
-    CONTRIBUTION, CONTRIBUTIONS_RECEIVED, CURRENT_ROUND, PAYOFF, POOL_MEMBER, POOL_STATUS;
+    CONTRIBUTION, CONTRIBUTIONS_RECEIVED, PAYOFF, POOL_MEMBER, POOL_STATUS;
 
     @Override
     public String toString() {
@@ -57,15 +56,10 @@ public class Pool extends Artifact {
   }
 
   @OPERATION
-  public void setRound(int round) {
-    this.round = round;
-  }
-
-  @OPERATION
   public void addMember(String playerName) {
     Atom player = createAtom(playerName);
     members.add(player);
-    defineObsProperty(Functor.POOL_MEMBER.toString(), player, round);
+    defineObsProperty(Functor.POOL_MEMBER.toString(), player);
   }
 
   @OPERATION
@@ -86,13 +80,13 @@ public class Pool extends Artifact {
   @OPERATION
   public void disclosePayoff() {
     final float payoff = (float) totalContribution / members.size();
-    defineObsProperty(Functor.PAYOFF.toString(), payoff, round);
+    defineObsProperty(Functor.PAYOFF.toString(), payoff);
   }
 
   @OPERATION
   public void discloseContributions() {
     contributions.forEach((player, value) -> {
-      defineObsProperty(Functor.CONTRIBUTION.toString(), player, value, round);
+      defineObsProperty(Functor.CONTRIBUTION.toString(), player, value);
     });
   }
 
@@ -114,7 +108,6 @@ public class Pool extends Artifact {
         removeObsProperty(Functor.POOL_MEMBER.toString());
       }
       removeObsProperty(Functor.PAYOFF.toString());
-      round = 0;
       members.clear();
       contributions.clear();
       totalContribution = 0;

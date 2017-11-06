@@ -8,44 +8,53 @@
 	
 	<norms>
 		<norm id="n1">
-			<activation>current_round(Round) &amp; pool_member(Player,Round)</activation>
+			<activation>pool_member(Player)</activation>
 			<issuer>manager</issuer>
 			<target>Player</target>
 			<deactivation>false</deactivation>
 			<deadline>pool_status("FINISHED")</deadline>
-			<content>obligation(contribution(Player,1,Round))</content>
+			<content>obligation(contribution(Player,1))</content>
 		</norm>
 	</norms>
 	<sanctions>
-        <sanction id="punishment">
-            <activation>
+		<sanction id="punishment">
+			<activation>
+				current_round(Round) &amp;
+				not .my_name(Target) &amp;
 				cost_to_punish(Cost) &amp;
 				tokens(Tokens) &amp;
 				Cost &lt;= Tokens
-            </activation>
-            <category>
-                <purpose>punishment</purpose>
-                <issuer>formal</issuer>
-                <locus>other_directed</locus>
-                <mode>direct</mode>
-                <polarity>negative</polarity>
-                <discernability>noticeable</discernability>
-            </category>
-            <content>punish(Target,Round)</content>
-        </sanction>
-        <sanction id="gossip">
-            <activation>current_round(Round)</activation>
-            <category>
-                <purpose>punishment</purpose>
-                <issuer>informal</issuer>
-                <locus>other_directed</locus>
-                <mode>direct</mode>
-                <polarity>negative</polarity>
-                <discernability>unnoticeable</discernability>
-            </category>
-            <content>gossip(Target,freerider,Round)</content>
-        </sanction>
-    </sanctions>
+			</activation>
+			<category>
+				<purpose>punishment</purpose>
+				<issuer>formal</issuer>
+				<locus>other_directed</locus>
+				<mode>direct</mode>
+				<polarity>negative</polarity>
+				<discernability>noticeable</discernability>
+			</category>
+			<content>punish(Target)</content>
+		</sanction>
+		<sanction id="gossip">
+			<activation>
+				not .my_name(Target) &amp;
+				.all_names(Ags) &amp;
+				manager(Manager) &amp;
+				.delete(Manager,Ags,Players) &amp;
+				.member(Player,Players) &amp;
+				not pool_member(Player)
+			</activation>
+			<category>
+				<purpose>punishment</purpose>
+				<issuer>informal</issuer>
+				<locus>other_directed</locus>
+				<mode>direct</mode>
+				<polarity>negative</polarity>
+				<discernability>unnoticeable</discernability>
+			</category>
+			<content>gossip(Target,freerider)</content>
+			</sanction>
+		</sanctions>
 	<ns-links>
 		<ns-link>
 			<nid>n1</nid>

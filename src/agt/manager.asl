@@ -15,7 +15,7 @@ pools([]).
   !list_players(L);
   +players(L);
   !create_pool_artifacts;
-  !wait_until_all_done(0).
+  !wait_until_all_done.
 
 
 +!list_players(L)
@@ -58,8 +58,7 @@ pools([]).
   for ( .range(I,1,Max) ) {
     !increment_round;
     !run_round;
-    ?current_round(Round);
-    !wait_until_all_done(Round);
+    !wait_until_all_done;
     !kill_players_in_death_row;
     !clear_pools;
   }.
@@ -84,7 +83,6 @@ pools([]).
   ?pools(Pools);
   for ( .range(I,0,NGroups-1) ) {
     .nth(I,Pools,pool(PoolName,_));
-    setRound(Round)[artifact_name(PoolName)];
     .puts("  Pool #{PoolName}:");
     for ( .range(J,I*GroupSize,(I+1)*GroupSize-1) & J < NumPlayers ) {
       .nth(J,Players,Player);
@@ -102,16 +100,17 @@ pools([]).
   .shuffle(L,S).
 
 
-+!wait_until_all_done(Round)
++!wait_until_all_done
   <-
-  .wait(all_done(Round));
-  -all_done(Round).
+  .wait(all_done);
+  .abolish(done(_));
+  -all_done.
 
 
-+done_with(_,Round)
-  : players(L) & .count(done_with(_,Round)) == .length(L)
++done(_)
+  : players(L) & .count(done(_)) == .length(L)
   <-
-  +all_done(Round).
+  +all_done.
 
 
 +!kill_players_in_death_row
