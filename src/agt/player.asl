@@ -129,7 +129,7 @@ sanctions_in_round(0).
 +!update_imgs
   <-
   ?current_round(Round);
-  for ( contribution(Player,Value) ) {
+  for ( contribution(Player,Value) & not .my_name(Player) ) {
     addInteraction(Player,Round,Value);
   }.
 
