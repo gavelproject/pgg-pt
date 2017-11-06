@@ -23,9 +23,13 @@
  *******************************************************************************/ 
 
 mas pgg {
-	agent player {
-		instances:	20
+	agent cooperator : player.asl {
+		instances:	50
 		beliefs:	move_strategy(cooperator)
+	}
+	agent freerider : player.asl {
+		instances:	50
+		beliefs:	move_strategy(freerider)
 	}
 	agent manager {
 		beliefs:	benefit_factor(3),
@@ -36,11 +40,13 @@ mas pgg {
 	workspace pgg { 
 		artifact de_jure: gavel.jacamo.DeJure("src/org/regulative-spec.xml") {
 			focused-by: manager,
-						player
+						cooperator,
+						freerider
 		}
 		artifact capability_board: gavel.jacamo.CapabilityBoard() {
 			focused-by: manager,
-						player
+						cooperator,
+						freerider
 		}
 	}
 
