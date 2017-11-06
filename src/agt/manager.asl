@@ -35,6 +35,7 @@ pools([]).
     .concat("pool",I,PoolName);
     makeArtifact(PoolName,"pgg.Pool",[],PoolId);
     focus(PoolId);
+    ?focused(pgg,_,PoolId);
     !add_pool(PoolName,PoolId);
   }.
 

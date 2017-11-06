@@ -38,7 +38,8 @@ sanctions_in_round(0).
   .my_name(Me);
    .concat(Me,".de_facto",DfName);
    makeArtifact(DfName,"gavel.jacamo.DeFacto",[],DfId);
-   focus(DfId).
+   focus(DfId);
+   ?focused(pgg,_,DfId).
 
 
 +!create_img_db
@@ -48,7 +49,8 @@ sanctions_in_round(0).
    ?weight_gossip_img(WG);
    ?weight_interaction_img(WI);
    makeArtifact(DbName,"pgg.ImageDb",[WG,WI],DbId);
-   focus(DbId).
+   focus(DbId);
+   ?focused(pgg,_,DbId).
 
 
 +!acquire_capabilities
@@ -83,7 +85,8 @@ sanctions_in_round(0).
 +!focus_pool(PoolName)
   <-
   lookupArtifact(PoolName,PoolId);
-  focus(PoolId).
+  focus(PoolId);
+  ?focused(pgg,_,PoolId).
 
 
 +!players_from_other_groups(Result)
