@@ -38,6 +38,9 @@ public class ImageDb extends Artifact {
   private double gossipWeight;
   private double interactionWeight;
 
+  private double gossipImg = -1;
+  private double interactionImg = -1;
+
   private final Map<Atom, Map<Integer, Integer>> interactions = new HashMap<>();
   private final Map<Atom, Map<Atom, Double>> gossips = new HashMap<>();
 
@@ -82,12 +85,7 @@ public class ImageDb extends Artifact {
                         .mapToDouble(v -> v)
                         .average()
                         .getAsDouble();
-    ObsProperty prop = getObsPropertyByTemplate("gossip_img", target, null);
-    if (prop != null) {
-      prop.updateValue(1, avg);
-    } else {
-      defineObsProperty("gossip_img", target, avg);
-    }
+    gossipImg = avg;
   }
 
   private void updateInteractionImg(Atom target) {
@@ -97,33 +95,23 @@ public class ImageDb extends Artifact {
                              .mapToLong(v -> v)
                              .average()
                              .getAsDouble();
-    ObsProperty prop = getObsPropertyByTemplate("interaction_img", target, null);
-    if (prop != null) {
-      prop.updateValue(1, avg);
-    } else {
-      defineObsProperty("interaction_img", target, avg);
-    }
+    interactionImg = avg;
   }
 
   private void updateOverallImg(Atom target) {
-    ObsProperty interactionProp = getObsPropertyByTemplate("interaction_img", target, null);
-    ObsProperty overallProp = getObsPropertyByTemplate("overall_img", target, null);
-    ObsProperty gossipProp = getObsPropertyByTemplate("gossip_img", target, null);
-    if (interactionProp == null) {
-      float gossipImg = gossipProp.floatValue(1);
-      if (overallProp == null) {
-        defineObsProperty("overall_img", target, gossipImg);
-      }
-      defineObsProperty("overall_img", target, gossipImg);
-    } else if (gossipProp == null) {
-      float interactionImg = interactionProp.floatValue(1);
-      if (overallProp == null) {
-        defineObsProperty("overall_img", target, interactionImg);
-      }
+    double overallImg;
+    if (interactions.isEmpty()) {
+      overallImg = gossipImg;
+    } else if (gossips.isEmpty()) {
+      overallImg = interactionImg;
     } else {
-      float gossipImg = gossipProp.floatValue(1);
-      float interactionImg = interactionProp.floatValue(1);
-      double overallImg = (interactionWeight * interactionImg) + (gossipWeight * gossipImg);
+      overallImg = (interactionWeight * interactionImg) + (gossipWeight * gossipImg);
+    }
+
+    ObsProperty overallProp = getObsPropertyByTemplate("overall_img", target, null);
+    if (overallProp == null) {
+      defineObsProperty("overall_img", target, overallImg);
+    } else {
       overallProp.updateValue(1, overallImg);
     }
   }
