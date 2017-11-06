@@ -31,10 +31,12 @@ pools([]).
   ?group_size(GroupSize);
   NGroups = .length(L) / GroupSize;
   +ngroups(NGroups);
+  cartago.new_array("java.lang.String[]",["contributions_received"],Array);
+  cartago.new_obj("cartago.events.SignalFilter",[Array],Filter);
   for ( .range(I,1,NGroups) ) {
     .concat("pool",I,PoolName);
     makeArtifact(PoolName,"pgg.Pool",[],PoolId);
-    focus(PoolId);
+    focus(PoolId,Filter);
     ?focused(pgg,_,PoolId);
     !add_pool(PoolName,PoolId);
   }.
