@@ -65,9 +65,12 @@ public class ImageDb extends Artifact {
   @OPERATION
   public void addInteraction(String target, int round, int contribution) {
     Atom targetAtom = createAtom(target);
-    Map<Integer, Integer> newEntry = new HashMap<>();
-    newEntry.put(round, contribution);
-    interactions.put(targetAtom, newEntry);
+    Map<Integer, Integer> entryMap = interactions.get(targetAtom);
+    if (entryMap == null) {
+      entryMap = new HashMap<>();
+      interactions.put(targetAtom, entryMap);
+    }
+    entryMap.put(round, contribution);
     updateInteractionImg(targetAtom);
     updateOverallImg(targetAtom);
   }
