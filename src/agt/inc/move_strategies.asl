@@ -1,5 +1,6 @@
 +!play_move
-  : move_strategy(cooperator)
+  : move_strategy(cooperator) |
+    move_strategy(nice)
   <-
   contribute(1).
 

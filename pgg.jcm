@@ -35,6 +35,10 @@ mas pgg {
 		instances:	50
 		beliefs:	move_strategy(mean)
 	}
+	agent nice : player.asl {
+		instances:	50
+		beliefs:	move_strategy(nice)
+	}
 	agent manager {
 		beliefs:	benefit_factor(3),
 					group_size(5),
@@ -46,13 +50,15 @@ mas pgg {
 			focused-by: manager,
 						cooperator,
 						freerider,
-						mean
+						mean,
+						nice
 		}
 		artifact capability_board: gavel.jacamo.CapabilityBoard() {
 			focused-by: manager,
 						cooperator,
 						freerider,
-						mean
+						mean,
+						nice
 		}
 	}
 
