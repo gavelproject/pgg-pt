@@ -24,7 +24,8 @@
 
 mas pgg {
 	agent player {
-		instances:	10
+		instances:	20
+		beliefs:	move_strategy(cooperator)
 	}
 	agent manager {
 		beliefs:	benefit_factor(3),

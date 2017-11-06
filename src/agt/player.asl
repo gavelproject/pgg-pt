@@ -92,11 +92,7 @@ weight_gossip_img(0.2).
 
 +pool_status("RUNNING")[artifact_id(PoolId)]
   <-
-  if (.random(X) & X >= 0.5) {
-    !contribute(1,PoolId);
-  } else {
-    !contribute(0,PoolId);
-  }.
+  !play_move.
 
 
 +!contribute(Contribution,PoolId)
@@ -208,7 +204,8 @@ weight_gossip_img(0.2).
   !increase_sanctions_in_round.
 
 
-{ include("sanction_strategies.asl") }
 { include("controller_strategy.asl") }
+{ include("move_strategies.asl") }
+{ include("sanction_strategies.asl") }
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/org-obedient.asl") }
