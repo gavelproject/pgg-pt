@@ -1,5 +1,4 @@
-/* INITIAL BELIEFS */
-
+/* SIMULATION PARAMETERS */
 cost_to_punish(1).
 cost_being_punished(5).
 /**
@@ -8,14 +7,18 @@ cost_being_punished(5).
  * has passed since its application.
  */
 indeterminate_efficacy_after(2).
-manager(manager).
 /** gossip/punishment/random_choice/random_threshold */
 sanction_strategy(punishment).
-sanctions_in_round(0).
-freeriders_threshold(0.2).
+min_img_cooperator(0.6).
+max_fr_percentage_in_group(0.2).
 tokens(50).
 weight_interaction_img(0.8).
 weight_gossip_img(0.2).
+
+
+/* INITIAL BELIEFS */
+manager(manager).
+sanctions_in_round(0).
 
 
 /* PLANS */
@@ -110,8 +113,8 @@ weight_gossip_img(0.2).
 
 +pool_status("FINISHED")[artifact_id(PoolId)]
   <-
-  !update_imgs;
   .wait(.count(contribution(_,_)) == .count(pool_member(_)) );
+  !update_imgs;
   !detect_normative_events;
 
   // Wait for all sanctions to be applied
