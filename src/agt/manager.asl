@@ -68,10 +68,9 @@ pools([]).
 +!increment_round
   <-
   ?current_round(OldRound);
-  NewRound = OldRound + 1;
+  NewRound = OldRound+1;
   -+current_round(NewRound);
-  .puts("Round##{NewRound}:");
-  .broadcast(tell,current_round(NewRound)).
+  .puts("Round##{NewRound}:").
 
 
 +!run_round

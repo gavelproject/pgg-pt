@@ -17,6 +17,7 @@ weight_gossip_img(0.2).
 
 
 /* INITIAL BELIEFS */
+current_round(0).
 manager(manager).
 sanctions_in_round(0).
 
@@ -78,12 +79,11 @@ sanctions_in_round(0).
   .send(Manager,tell,done(Me)).
 
 
-+current_round(Round) <- .abolish(current_round(Round-1)).
-
-
 // goal sent by the manager
 +!focus_pool(PoolName)
   <-
+  ?current_round(OldRound);
+  -+current_round(OldRound+1);
   lookupArtifact(PoolName,PoolId);
   focus(PoolId);
   ?focused(pgg,_,PoolId).
