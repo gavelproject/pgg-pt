@@ -1,3 +1,4 @@
+current_round(0).
 players([]).
 ngroups(_).
 pools([]).
@@ -80,12 +81,13 @@ pools([]).
   ?ngroups(NGroups);
   ?group_size(GroupSize);
   !shuffled_players(Players);
+  .length(Players,NumPlayers);
   ?pools(Pools);
   for ( .range(I,0,NGroups-1) ) {
     .nth(I,Pools,pool(PoolName,_));
     setRound(Round)[artifact_name(PoolName)];
     .puts("  Pool #{PoolName}:");
-    for ( .range(J,I*GroupSize,(I+1)*GroupSize-1) & J < .length(Players) ) {
+    for ( .range(J,I*GroupSize,(I+1)*GroupSize-1) & J < NumPlayers ) {
       .nth(J,Players,Player);
       addMember(Player)[artifact_name(PoolName)];
       .puts("    #{Player}");

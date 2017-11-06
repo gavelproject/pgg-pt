@@ -1,7 +1,25 @@
+/* INITIAL BELIEFS */
+
+cost_to_punish(1).
+cost_being_punished(5).
+current_round(0).
+/**
+ * Consider efficacy of a sanction application as
+ * 'indeterminate' after the given number of rounds
+ * has passed since its application.
+ */
+indeterminate_efficacy_after(2).
 manager(manager).
+/** gossip/punishment/random_choice/random_threshold */
+sanction_strategy(punishment).
 sanctions_in_round(0).
+freeriders_threshold(0.2).
+tokens(50).
+weight_interaction_img(0.8).
+weight_gossip_img(0.2).
 
 
+/* PLANS */
 !start.
 
 
