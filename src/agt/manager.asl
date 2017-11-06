@@ -1,5 +1,4 @@
 current_round(0).
-pools([]).
 
 !setup_then_start.
 
@@ -12,24 +11,25 @@ pools([]).
 
 +!setup
   <-
-  !list_players(L);
-  +players(L);
+  !update_players_list;
   !create_pool_artifacts;
   !wait_until_all_done.
 
 
-+!list_players(L)
++!update_players_list
   <-
   .all_names(Ags);
   .my_name(Me);
-  .delete(Me,Ags,L).
+  .delete(Me,Ags,Players);
+  -+players(Players);
+  -+num_players(.length(Players)).
 
 
 +!create_pool_artifacts
   <-
-  ?players(L);
+  ?num_players(NumPlayers);
   ?group_size(GroupSize);
-  NGroups = .length(L) / GroupSize;
+  NGroups = NumPlayers/GroupSize;
   +ngroups(NGroups);
   cartago.new_array("java.lang.String[]",["contributions_received"],Array);
   cartago.new_obj("cartago.events.SignalFilter",[Array],Filter);
@@ -38,21 +38,18 @@ pools([]).
     makeArtifact(PoolName,"pgg.Pool",[],PoolId);
     focus(PoolId,Filter);
     ?focused(pgg,_,PoolId);
-    !add_pool(PoolName,PoolId);
-  }.
+  }
+  !store_pools.
 
 
--!create_pool_artifacts
++!store_pools
   <-
-  .wait(100);
-  !create_pool_artifacts.
-
-
-+!add_pool(PoolName,PoolId)
-  <-
-  ?pools(CurrentList);
-  .union(CurrentList,[pool(PoolName,PoolId)],NewList);
-  -+pools(NewList).
+  .findall(
+    PoolName,
+    focused(pgg,PoolName[artifact_type("pgg.Pool")],_),
+    PoolsList
+  );
+  +pools(PoolsList).
 
 
 +!start
@@ -81,10 +78,10 @@ pools([]).
   ?ngroups(NGroups);
   ?group_size(GroupSize);
   !shuffled_players(Players);
-  .length(Players,NumPlayers);
+  ?num_players(NumPlayers);
   ?pools(Pools);
   for ( .range(I,0,NGroups-1) ) {
-    .nth(I,Pools,pool(PoolName,_));
+    .nth(I,Pools,PoolName);
     .puts("  Pool #{PoolName}:");
     for ( .range(J,I*GroupSize,(I+1)*GroupSize-1) & J < NumPlayers ) {
       .nth(J,Players,Player);
@@ -110,27 +107,30 @@ pools([]).
 
 
 +done(_)
-  : players(L) & .count(done(_)) == .length(L)
+  : num_players(N) & .count(done(_)) == N
   <-
   +all_done.
 
 
 +!kill_players_in_death_row
+  : in_death_row(_)
   <-
   for ( in_death_row(Player) ) {
     .kill_agent(Player);
     .abolish(in_death_row(Player));
   }
-  !list_players(UpdatedList);
-  -+players(UpdatedList);
+  !update_players_list;
   .wait(not in_death_row(_)).
+
+
++!kill_players_in_death_row.
 
 
 +!clear_pools
   <-
   ?pools(Pools);
-  for ( .member(pool(_,PoolId),Pools)) {
-  	clear[artifact_id(PoolId)];
+  for ( .member(PoolName,Pools) ) {
+    clear[artifact_name(PoolName)];
   }.
 
 

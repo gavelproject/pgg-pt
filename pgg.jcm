@@ -43,19 +43,18 @@ mas pgg {
 		beliefs:	benefit_factor(3),
 					group_size(5),
 					max_rounds(10)
+		join:		pgg
 	}
 
 	workspace pgg { 
 		artifact de_jure: gavel.jacamo.DeJure("src/org/regulative-spec.xml") {
-			focused-by: manager,
-						cooperator,
+			focused-by: cooperator,
 						freerider,
 						mean,
 						nice
 		}
 		artifact capability_board: gavel.jacamo.CapabilityBoard() {
-			focused-by: manager,
-						cooperator,
+			focused-by: cooperator,
 						freerider,
 						mean,
 						nice
