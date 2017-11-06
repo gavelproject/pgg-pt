@@ -2,7 +2,6 @@
 
 cost_to_punish(1).
 cost_being_punished(5).
-current_round(0).
 /**
  * Consider efficacy of a sanction application as
  * 'indeterminate' after the given number of rounds
@@ -27,7 +26,8 @@ weight_gossip_img(0.2).
   <-
   !create_de_facto;
   !create_img_db;
-  !acquire_capabilities.
+  !acquire_capabilities;
+  !ready_to_play.
 
 
 +!create_de_facto
@@ -64,6 +64,13 @@ weight_gossip_img(0.2).
   acquireCapability(C,Plan);
 //  .rename_apart(Plan,RenamedPlan);
   .add_plan(Plan).
+
+
++!ready_to_play
+  <-
+  .my_name(Me);
+  ?manager(Manager);
+  .send(Manager,tell,done_with(Me,0)).
 
 
 +current_round(Round) <- .abolish(current_round(Round-1)).

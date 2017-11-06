@@ -1,6 +1,4 @@
 current_round(0).
-players([]).
-ngroups(_).
 pools([]).
 
 !setup_then_start.
@@ -16,7 +14,8 @@ pools([]).
   <-
   !list_players(L);
   +players(L);
-  !create_pool_artifacts.
+  !create_pool_artifacts;
+  !wait_until_all_done(0).
 
 
 +!list_players(L)
@@ -31,7 +30,7 @@ pools([]).
   ?players(L);
   ?group_size(GroupSize);
   NGroups = .length(L) / GroupSize;
-  -+ngroups(NGroups);
+  +ngroups(NGroups);
   for ( .range(I,1,NGroups) ) {
     .concat("pool",I,PoolName);
     makeArtifact(PoolName,"pgg.Pool",[],PoolId);
