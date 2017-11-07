@@ -102,8 +102,7 @@ pending_sanctions(0).
 	-+tokens(T+Payoff).
 
 +pool_status("FINISHED")[artifact_id(PoolId)]
-<-.wait(.count(contribution(_,_)) == .count(pool_member(_)) );
-	!update_imgs;
+<-!update_imgs;
 	!detect_normative_events;
 
 	// Wait for all sanctions to be applied

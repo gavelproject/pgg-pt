@@ -67,13 +67,24 @@ current_round(0).
 	for ( .range(I,0,NGroups-1) ) {
 		.nth(I,Pools,PoolName);
 		.puts("	Pool #{PoolName}:");
+		/*
+		 * 1. Add the pool members to the pool.
+		 * 2. Run the pool.
+		 * 3. After the pool is running, tell the players they should focus on it.
+		 * This ensures that players will be able to percept all the
+		 * `pool_member(AgName)` observable properties when they focus on the
+		 * artefact.
+		 */
 		for ( .range(J,I*GroupSize,(I+1)*GroupSize-1) & J < NumPlayers ) {
 			.nth(J,Players,Player);
 			addMember(Player)[artifact_name(PoolName)];
 			.puts("		#{Player}");
-			.send(Player,achieve,focus_pool(PoolName));
 		}
 		run[artifact_name(PoolName)];
+		for ( .range(J,I*GroupSize,(I+1)*GroupSize-1) & J < NumPlayers ) {
+			.nth(J,Players,Player);
+			.send(Player,achieve,focus_pool(PoolName));
+		}
 	}.
 
 +!shuffled_players(S)
@@ -88,7 +99,6 @@ current_round(0).
 +done(_)
 : num_players(N) & .count(done(_)) == N
 <-+all_done.
-
 
 +!kill_players_in_death_row
 : in_death_row(_)
