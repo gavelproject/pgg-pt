@@ -2,7 +2,7 @@
 +!decide_sanctions(_,SanctionDecisions)
 : move_strategy(cooperator) |
 	move_strategy(freerider) |
-	~too_many_freeriders
+	not too_many_freeriders
 <-SanctionDecisions = [].
 
 // punishment/gossip only strategy

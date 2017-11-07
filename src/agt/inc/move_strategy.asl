@@ -1,13 +1,15 @@
 +!play_move
 : move_strategy(cooperator) |
 	move_strategy(nice) |
-	(move_strategy(mean) & ~too_many_freeriders)
-<-contribute(1).
+	(move_strategy(mean) & not too_many_freeriders)
+<--+move(defect);
+	contribute(1).
 
 +!play_move
 : move_strategy(freerider) |
 	(move_strategy(mean) & too_many_freeriders)
-<-contribute(0).
+<--+move(defect);
+	contribute(0).
 
 +!assess_pool_members_image
 <-?min_img_cooperator(MinCoop);
