@@ -24,19 +24,19 @@
 
 mas pgg {
 	agent cooperator : player.asl {
-		instances:	50
+		instances:	5
 		beliefs:	move_strategy(cooperator)
 	}
 	agent freerider : player.asl {
-		instances:	50
+		instances:	5
 		beliefs:	move_strategy(freerider)
 	}
 	agent mean : player.asl {
-		instances:	50
+		instances:	5
 		beliefs:	move_strategy(mean)
 	}
 	agent nice : player.asl {
-		instances:	50
+		instances:	5
 		beliefs:	move_strategy(nice)
 	}
 	agent manager {
