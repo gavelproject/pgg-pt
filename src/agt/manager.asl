@@ -49,7 +49,8 @@ current_round(0).
 		!wait_until_all_done;
 		!kill_players_in_death_row;
 		!clear_pools;
-	}.
+	}
+	.stopMAS.
 
 +!increment_round
 <-?current_round(OldRound);
