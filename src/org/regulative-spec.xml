@@ -42,7 +42,10 @@
 				manager(Manager) &amp;
 				.delete(Manager,Ags,Players) &amp;
 				.member(Player,Players) &amp;
-				not pool_member(Player)
+				not pool_member(Player) &amp;
+				overall_img(Target,Img) &amp;
+				min_img_cooperator(MinCoop) &amp;
+				Img &lt; MinCoop
 			</activation>
 			<category>
 				<purpose>punishment</purpose>
@@ -52,7 +55,7 @@
 				<polarity>negative</polarity>
 				<discernability>unnoticeable</discernability>
 			</category>
-			<content>gossip(Target,freerider)</content>
+			<content>gossip(Target,Img)</content>
 			</sanction>
 		</sanctions>
 	<ns-links>
