@@ -79,23 +79,21 @@ public class ImageDb extends Artifact {
   }
 
   private void updateGossipImg(Atom target) {
-    double avg = gossips.get(target)
-                        .values()
-                        .stream()
-                        .mapToDouble(v -> v)
-                        .average()
-                        .getAsDouble();
-    gossipImg = avg;
+    gossipImg = gossips.get(target)
+                       .values()
+                       .stream()
+                       .mapToDouble(v -> v)
+                       .average()
+                       .getAsDouble();
   }
 
   private void updateInteractionImg(Atom target) {
-    double avg = interactions.get(target)
-                             .values()
-                             .stream()
-                             .mapToLong(v -> v)
-                             .average()
-                             .getAsDouble();
-    interactionImg = avg;
+    interactionImg = interactions.get(target)
+                                 .values()
+                                 .stream()
+                                 .mapToLong(v -> v)
+                                 .average()
+                                 .getAsDouble();
   }
 
   private void updateOverallImg(Atom target) {
