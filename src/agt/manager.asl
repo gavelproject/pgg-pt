@@ -55,8 +55,7 @@ current_round(0).
 +!increment_round
 <-?current_round(OldRound);
 	NewRound = OldRound+1;
-	-+current_round(NewRound);
-	.puts("Round##{NewRound}:").
+	-+current_round(NewRound).
 
 +!run_round
 <-?current_round(Round);
@@ -67,7 +66,6 @@ current_round(0).
 	?pools(Pools);
 	for ( .range(I,0,NGroups-1) ) {
 		.nth(I,Pools,PoolName);
-		.puts("	Pool #{PoolName}:");
 		/*
 		 * 1. Add the pool members to the pool.
 		 * 2. Run the pool.
@@ -79,7 +77,6 @@ current_round(0).
 		for ( .range(J,I*GroupSize,(I+1)*GroupSize-1) & J < NumPlayers ) {
 			.nth(J,Players,Player);
 			addMember(Player)[artifact_name(PoolName)];
-			.puts("		#{Player}");
 		}
 		run[artifact_name(PoolName)];
 		for ( .range(J,I*GroupSize,(I+1)*GroupSize-1) & J < NumPlayers ) {

@@ -107,6 +107,7 @@ pending_sanctions(0).
 
 	// Wait for all sanctions to be applied
 	.wait(pending_sanctions(0));
+	!log_data;
 	!done(PoolId).
 
 +!update_imgs
@@ -133,6 +134,34 @@ pending_sanctions(0).
 		.send(Manager,tell,in_death_row(Me));
 	}
 	.send(Manager,tell,done(Me)).
+	
++!log_data
+<-?current_round(Round);
+	.my_name(Me);
+	?tokens(Wealth);
+	?move(Move);
+	?focused(_,PoolName[_],_);
+	.count(pool_member(_),PoolSize);
+	.findall(Defector,contribution(Defector,0),Defectors);
+	.findall(Cooperator,contribution(Cooperator,1),Cooperators);
+	.findall(
+		[Target,SanctionId],
+		applied_sanction(Target,SanctionId,Round),
+		AppliedSanctions
+	);
+	.concat(
+		Round,",",
+		Me,",",
+		Wealth,",",
+		Move,",",
+		PoolName,",",
+		PoolSize,",",
+		Cooperators,",",
+		Defectors,",",
+		AppliedSanctions,",",
+		Row
+	);
+	.print(Row).
 
 +!prepare_for_death
 <-.my_name(Me);
