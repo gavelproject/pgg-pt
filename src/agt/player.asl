@@ -116,16 +116,16 @@ pending_sanctions(0).
 	}.
 
 +!increment_pending_sanctions
-<-?pending_sanction(N);
+<-?pending_sanctions(N);
 	-+pending_sanctions(N+1).
 
 +!decrement_pending_sanctions
-<-?pending_sanction(N);
+<-?pending_sanctions(N);
 	-+pending_sanctions(N-1).
 
 +!done(PoolId)
 <-stopFocus(PoolId);
-	.abolish(focused(_,_[artifact_id(PoolId)],_));
+	.abolish(focused(_,_,PoolId));
 	.my_name(Me);
 	?manager(Manager);
 	if ( tokens(T) & T < 0 ) {
