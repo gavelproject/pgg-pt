@@ -39,11 +39,7 @@
 			<activation>
 				not gossips_credit(0) &amp;
 				not .my_name(Target) &amp;
-				.all_names(Ags) &amp;
-				manager(Manager) &amp;
-				.delete(Manager,Ags,Players) &amp;
-				.member(Player,Players) &amp;
-				not pool_member(Player) &amp;
+				not players_in_other_groups([]) &amp;
 				overall_img(Target,Img) &amp;
 				min_img_cooperator(MinCoop) &amp;
 				Img &lt; MinCoop

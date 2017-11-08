@@ -92,13 +92,15 @@ pending_sanctions(0).
 <-?gossips_credit(Credit);
 	-+gossips_credit(Credit-1).
 
-+!players_from_other_groups(Result)
++!update_players_in_other_groups
 <-.all_names(Ags);
 	.delete(manager,Ags,Players);
-	.findall(Player,.member(Player,Players) & not pool_member(Player),Result).
+	.findall(Player,.member(Player,Players) & not pool_member(Player),Result);
+	-+players_in_other_groups(Result).
 
 +pool_status("RUNNING")
-<-!assess_pool_members_image;
+<-!update_players_in_other_groups;
+	!assess_pool_members_image;
 	!play_move.
 
 +!contribute(Contribution,PoolId)
