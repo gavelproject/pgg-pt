@@ -9,6 +9,7 @@
 	.nth(0,Shuffled,Receiver);
 	.send(Receiver,tell,gossip(Target,ImgValue));
 	!add_applied_sanction(Target,gossip);
+	!decrement_gossips_credit;
 	!decrement_pending_sanctions.
 
 +!punish(Target)

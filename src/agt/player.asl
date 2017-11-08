@@ -9,17 +9,20 @@ tokens(50).
  */
 indeterminate_efficacy_after(2).
 
-/** [gossip|punishment|random_choice|random_threshold] */
-sanction_decision_strategy(punishment).
-
 /** Minimal image value to consider an agent as cooperator. */
 min_img_cooperator(0.6).
+
+/** Maximum number of gossips an agent can make per round. */
+max_gossips_per_round(2).
 
 /**
  * If noticed percentage of freeriders in the pool is greater than the number
  * given below, mean and nice agents use their individual active strategies.
  */
 max_percentage_freeriders(0.2).
+
+/** [gossip|punishment|random_choice|random_threshold] */
+sanction_decision_strategy(gossip).
 
 /** The two weights below should sum up to 1. */
 weight_interaction_img(0.8).
@@ -79,9 +82,15 @@ pending_sanctions(0).
 +!focus_pool(PoolName)
 <-?current_round(OldRound);
 	-+current_round(OldRound+1);
+	?max_gossips_per_round(MaxGossip);
+	-+gossips_credit(MaxGossip);
 	lookupArtifact(PoolName,PoolId);
 	focus(PoolId);
 	?focused(pgg,_,PoolId).
+
++!decrement_gossips_credit
+<-?gossips_credit(Credit);
+	-+gossips_credit(Credit-1).
 
 +!players_from_other_groups(Result)
 <-.all_names(Ags);

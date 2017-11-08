@@ -37,6 +37,7 @@
 		</sanction>
 		<sanction id="gossip">
 			<activation>
+				not gossips_credit(0) &amp;
 				not .my_name(Target) &amp;
 				.all_names(Ags) &amp;
 				manager(Manager) &amp;
