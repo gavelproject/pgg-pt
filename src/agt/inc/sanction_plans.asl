@@ -4,7 +4,7 @@
 	-+tokens(OldAmount-Cost).
 
 +!gossip(Target,ImgValue)
-<-!players_from_other_groups(ReceiverOptions);
+<-?players_in_other_groups(ReceiverOptions);
 	.shuffle(ReceiverOptions,Shuffled);
 	.nth(0,Shuffled,Receiver);
 	.send(Receiver,tell,gossip(Target,ImgValue));
