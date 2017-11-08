@@ -2,7 +2,7 @@
 : move_strategy(cooperator) |
 	move_strategy(nice) |
 	(move_strategy(mean) & not too_many_freeriders)
-<--+move(defect);
+<--+move(contribute);
 	contribute(1).
 
 +!play_move
