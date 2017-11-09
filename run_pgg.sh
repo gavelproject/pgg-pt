@@ -1,9 +1,9 @@
 #!/bin/bash
 mkdir -p log
-gradle build
+./gradlew build
 for (( i=1; i<=$1; i++ )); do
 	echo
 	echo
 	echo "################ Simulation#$i ################"
-	gradle -q
+	./gradlew -q
 done

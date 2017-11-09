@@ -37,14 +37,14 @@
 		if ( .length(Options) == 1 ) {
 			.nth(0,Options,Sanction);
 		} else {
-			!apply_sanction_decision_strategy(Options,SanctionDecisions);
+			!apply_sanction_decision_strategy(NormInstance,Options,SanctionDecisions);
 		}
 		!increment_pending_sanctions
 		SanctionDecisions = [Sanction];
 	}.
 
 // random_choice sanction decision strategy
-+!apply_sanction_decision_strategy(Options,[Sanction])
++!apply_sanction_decision_strategy(_,Options,[Sanction])
 : sanction_decision_strategy(random_choice)
 <-.random(X);
 	if (X < 0.5) {
@@ -54,9 +54,11 @@
 	}.
 
 // random_threshold sanction decision strategy
-+!apply_sanction_decision_strategy(Options,[Sanction])
++!apply_sanction_decision_strategy(
+	norm(_,_,_,_,target(Target),_,_,_),Options,[Sanction]
+)
 : sanction_decision_strategy(random_threshold)
-<-.random(Threshold);
+<-?overall_img(Target,Threshold);
 	.random(X);
 	if (X < Threshold) {
 		S = gossip;
