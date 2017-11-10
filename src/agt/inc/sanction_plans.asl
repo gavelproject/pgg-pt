@@ -5,8 +5,8 @@
 
 +!gossip(Target,ImgValue)
 <-?players_in_other_groups(ReceiverOptions);
-	.shuffle(ReceiverOptions,Shuffled);
-	.nth(0,Shuffled,Receiver);
+	jia.random_int(0,.length(ReceiverOptions),I);
+	.nth(I,ReceiverOptions,Receiver);
 	.send(Receiver,tell,gossip(Target,ImgValue));
 	!add_applied_sanction(Target,gossip);
 	!decrement_gossips_credit;
