@@ -13,7 +13,7 @@ indeterminate_efficacy_after(2).
 min_img_cooperator(0.6).
 
 /** Maximum number of gossips an agent can make per round. */
-max_gossips_per_round(2).
+max_gossips_per_round(10).
 
 /**
  * If noticed percentage of freeriders in the pool is greater than the number
@@ -160,7 +160,7 @@ pending_sanctions(0).
 		applied_sanction(Target,SanctionId,Round),
 		AppliedSanctions
 	);
-	.concat(
+	.print(
 		Round,",",
 		Me,",",
 		Wealth,",",
@@ -169,10 +169,8 @@ pending_sanctions(0).
 		PoolSize,",",
 		Cooperators,",",
 		Defectors,",",
-		AppliedSanctions,",",
-		Row
-	);
-	.print(Row).
+		AppliedSanctions
+	).
 
 +!prepare_for_death
 <-.my_name(Me);
