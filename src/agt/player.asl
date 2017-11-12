@@ -167,9 +167,9 @@ pending_sanctions(0).
 		Move,",",
 		PoolName,",",
 		PoolSize,",",
-		Cooperators,",",
-		Defectors,",",
-		AppliedSanctions
+		"\"",Cooperators,"\"",",",
+		"\"",Defectors,"\"",",",
+		"\"",AppliedSanctions,"\""
 	).
 
 +!prepare_for_death
