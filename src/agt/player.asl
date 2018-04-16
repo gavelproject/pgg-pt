@@ -62,7 +62,7 @@ pending_sanctions(0).
 +!acquire_capabilities
 <-?focused(_,capability_board,_);
 	?capabilities(L);
-	for ( .member(C,L) ) {
+	for ( .member(C,["detector","evaluator","executor"]) ) {
 		!acquire_capability(C);
 		registerSelfAs(C);
 	}. 
