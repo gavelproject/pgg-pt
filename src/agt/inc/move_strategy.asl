@@ -2,26 +2,40 @@
 : move_strategy(prospector)
 <-	!check_new_pool_mates;
 	!estimate_incomes;
-	?defect_utility(Mu);
-	jia.abs(Mu,MuAbs);
+	?defect_utility(MuD);
+	?cooperate_utility(MuC);
+	jia.abs(MuD,MuDAbs);
+	jia.abs(MuC,MuCAbs);
 
-	// Sigmoid function
-	X = (Mu/(1+MuAbs)+1)/2;
+	// Normalisation
+	MuDN = (MuD/(1+MuDAbs)+1)/2;
+	MuCN = (MuC/(1+MucAbs)+1)/2;
 
-	if ( .random(N) & N < X ) {
-		-+move(defect);
-		contribute(0);
-	} else {
+	ProbCoop = (MuCN+(1-MuDN))/2
+
+	if ( .random(N) & N < ProbCoop ) {
 		-+move(cooperate);
 		contribute(1);
+	} else {
+		-+move(defect);
+		contribute(0);
 	}.
+
++?cooperate_utility(Mu)
+<-	?current_round(T);
+	?income_cooperation(T,Ic);
+	?income_defect(T,Id);
+	?cooperation_cost(C);
+	?gain_loss_utility(Ic-Id,C,U);
+	Mu = Ic + U.
 
 +?defect_utility(Mu)
 <-	?current_round(T);
 	?income_cooperation(T,Ic);
 	?income_defect(T,Id);
 	?cooperation_cost(C);
-	?gain_loss_utility(C,Ic-Id,Mu).
+	?gain_loss_utility(C,Ic-Id,U);
+	Mu = Id + U.
 
 +!check_new_pool_mates
 <-	for ( pool_member(Player) &
@@ -32,10 +46,10 @@
 		+defections_towards(Player,0);
 	}.
 
-+?gain_loss_utility(Gain,Loss,Mu)
++?gain_loss_utility(Gain,Loss,U)
 <-	?gain_loss_utility_coeff(Eta);
 	?loss_aversion_coeff(Lambda);
-	Mu = Eta*Gain-Eta*Lambda*Loss.
+	U = Eta*Gain-Eta*Lambda*Loss.
 
 +!estimate_incomes
 <-	?benefit_factor(Phi);

@@ -1,8 +1,8 @@
 //////////////////// BEGIN SIMULATION PARAMETERS ////////////////////
 benefit_factor(3).
 cooperation_cost(1).
-cost_to_punish(0.2).
-cost_being_punished(2).
+cost_to_punish(0.05).
+cost_being_punished(0.5).
 gain_loss_utility_coeff(1).
 loss_aversion_coeff(2.25).
 tokens(50).
@@ -11,7 +11,7 @@ tokens(50).
 min_img_cooperator(0.6).
 
 /** Maximum number of gossips an agent can make per round. */
-max_gossips_per_round(1).
+max_gossips_per_round(10).
 
 /**
  * If noticed percentage of freeriders in the pool is greater than the number
@@ -20,7 +20,7 @@ max_gossips_per_round(1).
 max_percentage_freeriders(0.2).
 
 /** [gossip|punishment|random|threshold] */
-sanction_decision_strategy(gossip).
+sanction_decision_strategy(random).
 
 /** The two weights below should sum up to 1. */
 weight_interaction_img(0.8).
