@@ -21,7 +21,7 @@ max_gossips_per_round(10).
  */
 max_percentage_freeriders(0.2).
 
-/** [gossip|punishment|random_choice|random_threshold] */
+/** [gossip|punishment|random|threshold] */
 sanction_decision_strategy(gossip).
 
 /** The two weights below should sum up to 1. */
