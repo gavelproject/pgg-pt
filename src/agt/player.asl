@@ -1,19 +1,17 @@
 //////////////////// BEGIN SIMULATION PARAMETERS ////////////////////
-cost_to_punish(1).
-cost_being_punished(5).
+benefit_factor(3).
+cooperation_cost(1).
+cost_to_punish(0.2).
+cost_being_punished(2).
+gain_loss_utility_coeff(1).
+loss_aversion_coeff(2.25).
 tokens(50).
-
-/**
- * Consider efficacy of a sanction application as 'indeterminate' after the
- * given number of rounds has passed since its application.
- */
-indeterminate_efficacy_after(2).
 
 /** Minimal image value to consider an agent as cooperator. */
 min_img_cooperator(0.6).
 
 /** Maximum number of gossips an agent can make per round. */
-max_gossips_per_round(10).
+max_gossips_per_round(1).
 
 /**
  * If noticed percentage of freeriders in the pool is greater than the number
@@ -61,7 +59,6 @@ pending_sanctions(0).
 
 +!acquire_capabilities
 <-?focused(_,capability_board,_);
-	?capabilities(L);
 	for ( .member(C,["detector","evaluator","executor"]) ) {
 		!acquire_capability(C);
 		registerSelfAs(C);
@@ -100,7 +97,6 @@ pending_sanctions(0).
 
 +pool_status("RUNNING")
 <-!update_players_in_other_groups;
-	!assess_pool_members_image;
 	!play_move.
 
 +!contribute(Contribution,PoolId)
@@ -152,24 +148,12 @@ pending_sanctions(0).
 	?tokens(Wealth);
 	?move(Move);
 	?focused(_,PoolName[_],_);
-	.count(pool_member(_),PoolSize);
-	.findall(Defector,contribution(Defector,0),Defectors);
-	.findall(Cooperator,contribution(Cooperator,1),Cooperators);
-	.findall(
-		[Target,SanctionId],
-		applied_sanction(Target,SanctionId,Round),
-		AppliedSanctions
-	);
 	.print(
 		Round,",",
 		Me,",",
 		Wealth,",",
 		Move,",",
-		PoolName,",",
-		PoolSize,",",
-		"\"",Cooperators,"\"",",",
-		"\"",Defectors,"\"",",",
-		"\"",AppliedSanctions,"\""
+		PoolName
 	).
 
 +!prepare_for_death

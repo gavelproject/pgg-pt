@@ -31,17 +31,13 @@ mas pgg {
 		instances:	100
 		beliefs:		move_strategy(freerider)
 	}
-	agent mean : player.asl {
+	agent prospector : player.asl {
 		instances:	100
-		beliefs:		move_strategy(mean)
-	}
-	agent nice : player.asl {
-		instances:	100
-		beliefs:		move_strategy(nice)
+		beliefs:		move_strategy(prospector)
 	}
 	agent manager {
 		beliefs:	benefit_factor(3),
-							group_size(5),
+							group_size(25),
 							max_rounds(100)
 		join:			pgg
 	}
@@ -50,14 +46,12 @@ mas pgg {
 		artifact de_jure: gavel.jacamo.DeJure("src/org/regulative-spec.xml") {
 			focused-by: cooperator,
 									freerider,
-									mean,
-									nice
+									prospector
 		}
 		artifact capability_board: gavel.jacamo.CapabilityBoard() {
 			focused-by: cooperator,
 									freerider,
-									mean,
-									nice
+									prospector
 		}
 	}
 
