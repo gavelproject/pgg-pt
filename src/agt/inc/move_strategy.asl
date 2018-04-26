@@ -83,13 +83,18 @@
 +?prob_being_punished(PBP)
 <-	.findall(P,pool_member(P) & not .my_name(P),PoolMates);
 	!sum_prob_being_punished(PoolMates,Sum);
-	PBP = 1*Sum/.length(PoolMates).
+	PBP = Sum/.length(PoolMates).
 
 +!sum_prob_being_punished([H|T],Sum)
 <-	!sum_prob_being_punished(T,PartialSum);
 	?punishments_received(H,P);
 	?defections_towards(H,D);
-	Sum = (P+0**D)/(D+2*0**D) + PartialSum.
+	if (D == 0) {
+		.random(X);
+		Sum = X + PartialSum;
+	} else {
+		Sum = P/D + PartialSum;
+	}.
 
 +!sum_prob_being_punished([],0).
 
