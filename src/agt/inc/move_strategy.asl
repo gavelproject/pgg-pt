@@ -9,7 +9,7 @@
 
 	// Normalisation
 	MuDN = (MuD/(1+MuDAbs)+1)/2;
-	MuCN = (MuC/(1+MucAbs)+1)/2;
+	MuCN = (MuC/(1+MuCAbs)+1)/2;
 
 	ProbCoop = (MuCN+(1-MuDN))/2
 
