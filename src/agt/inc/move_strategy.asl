@@ -123,9 +123,10 @@
 		+~too_many_freeriders;
 	}.
 
-+!move(defect)
++move(defect)
 : move_strategy(prospector)
 <-	for ( pool_member(Player) & not .my_name(Player) ) {
 		?defections_towards(Player,N);
-		-+defections_towards(Player,N+1);
+		-defections_towards(Player,N);
+		+defections_towards(Player,N+1);
 	}.
