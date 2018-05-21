@@ -1,3 +1,6 @@
+// freerider
++!decide_sanctions(_,[]) : move_strategy(freerider).
+
 // punishment/gossip only strategy
 +!decide_sanctions(NormInstance,SanctionDecisions)
 : sanction_decision_strategy(S) & (S == gossip | S == punishment)
@@ -25,11 +28,11 @@
 	} else {
 		if ( .length(Options) == 1 ) {
 			.nth(0,Options,Sanction);
+			SanctionDecisions = [Sanction];
 		} else {
 			!apply_sanction_decision_strategy(NormInstance,Options,SanctionDecisions);
 		}
-		!increment_pending_sanctions
-		SanctionDecisions = [Sanction];
+		!increment_pending_sanctions;
 	}.
 
 // random sanction decision strategy

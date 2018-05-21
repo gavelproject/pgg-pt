@@ -25,40 +25,40 @@
 mas pgg {
 	agent cooperator : player.asl {
 		instances:	100
-		beliefs:		move_strategy(cooperator)
+		beliefs:	move_strategy(cooperator)
 	}
 	agent freerider : player.asl {
 		instances:	100
-		beliefs:		move_strategy(freerider)
+		beliefs:	move_strategy(freerider)
 	}
 	agent prospector : player.asl {
 		instances:	100
-		beliefs:		move_strategy(prospector)
+		beliefs:	move_strategy(prospector)
 	}
 	agent manager {
 		beliefs:	benefit_factor(3),
-							group_size(25),
-							max_rounds(100)
-		join:			pgg
+				group_size(25),
+				max_rounds(100)
+		join:		pgg
 	}
 
 	workspace pgg { 
 		artifact de_jure: gavel.jacamo.DeJure("src/org/regulative-spec.xml") {
-			focused-by: cooperator,
-									freerider,
-									prospector
+			focused-by:	cooperator,
+					freerider,
+					prospector
 		}
 		artifact capability_board: gavel.jacamo.CapabilityBoard() {
-			focused-by: cooperator,
-									freerider,
-									prospector
+			focused-by:	cooperator,
+					freerider,
+					prospector
 		}
 	}
 
 	platform:	startWebMindInspector("false")
-						startWebEnvInspector("false")
+			startWebEnvInspector("false")
 
 	// agent source path
-	asl-path: src/agt
-						src/agt/inc
+	asl-path:	src/agt
+			src/agt/inc
 }

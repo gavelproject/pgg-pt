@@ -1,8 +1,8 @@
 //////////////////// BEGIN SIMULATION PARAMETERS ////////////////////
 benefit_factor(3).
 cooperation_cost(1).
-cost_to_punish(0.05).
-cost_being_punished(0.5).
+cost_to_punish(0.25).
+cost_being_punished(1.25).
 gain_loss_utility_coeff(1).
 loss_aversion_coeff(2.25).
 tokens(50).
@@ -10,21 +10,15 @@ tokens(50).
 /** Minimal image value to consider an agent as cooperator. */
 min_img_cooperator(0.6).
 
-/** Maximum number of gossips an agent can make per round. */
-max_gossips_per_round(10).
-
-/**
- * If noticed percentage of freeriders in the pool is greater than the number
- * given below, mean and nice agents use their individual active strategies.
- */
-max_percentage_freeriders(0.2).
+/** Maximum percentage of mates that may be sanctioned per round. */
+max_sanction_ratio(0.75).
 
 /** [gossip|punishment|random|threshold] */
-sanction_decision_strategy(random).
+sanction_decision_strategy(punishment).
 
 /** The two weights below should sum up to 1. */
-weight_interaction_img(0.8).
-weight_gossip_img(0.2).
+weight_interaction_img(0.6).
+weight_gossip_img(0.4).
 /////////////////// END SIMULATION PARAMETERS /////////////////////
 
 /* INITIAL BELIEFS */
@@ -79,15 +73,9 @@ pending_sanctions(0).
 +!focus_pool(PoolName)
 <-?current_round(OldRound);
 	-+current_round(OldRound+1);
-	?max_gossips_per_round(MaxGossip);
-	-+gossips_credit(MaxGossip);
 	lookupArtifact(PoolName,PoolId);
 	focus(PoolId);
 	?focused(pgg,_,PoolId).
-
-+!decrement_gossips_credit
-<-?gossips_credit(Credit);
-	-+gossips_credit(Credit-1).
 
 +!update_players_in_other_groups
 <-.all_names(Ags);
@@ -97,6 +85,10 @@ pending_sanctions(0).
 
 +pool_status("RUNNING")
 <-!update_players_in_other_groups;
+	.count(pool_member(_),NumPlayers);
+	?max_sanction_ratio(MaxSanctionRatio);
+	math.floor((NumPlayers-1)*MaxSanctionRatio,SanctionsCredit);
+	-+sanctions_credit(SanctionsCredit);
 	!play_move.
 
 +!contribute(Contribution,PoolId)
@@ -114,8 +106,7 @@ pending_sanctions(0).
 
 	// Wait for all sanctions to be applied
 	.wait(pending_sanctions(0));
-	!log_data;
-	!done(PoolId).
+	!done_playing(PoolId).
 
 +!update_imgs
 <-?current_round(Round);
@@ -125,16 +116,16 @@ pending_sanctions(0).
 
 +!increment_pending_sanctions
 <-?pending_sanctions(N);
-	-+pending_sanctions(N+1).
+	-+pending_sanctions(N+1);
+	?sanctions_credit(Credit);
+	-+sanctions_credit(Credit-1).
 
 +!decrement_pending_sanctions
 <-?pending_sanctions(N);
 	-+pending_sanctions(N-1).
 
-+!done(PoolId)
-<-stopFocus(PoolId);
-	.abolish(focused(_,_,PoolId));
-	.my_name(Me);
++!done_playing(PoolId)
+<-	.my_name(Me);
 	?manager(Manager);
 	if ( tokens(T) & T < 0 ) {
 		!prepare_for_death;
@@ -147,14 +138,22 @@ pending_sanctions(0).
 	.my_name(Me);
 	?tokens(Wealth);
 	?move(Move);
-	?focused(_,PoolName[_],_);
+	?focused(_,PoolName[_],PoolId);
 	.print(
 		Round,",",
 		Me,",",
 		Wealth,",",
 		Move,",",
 		PoolName
-	).
+	);
+	!done_log(PoolId).
+
++!done_log(PoolId)
+<-	stopFocus(PoolId);
+	.abolish(focused(_,_,PoolId));
+	.my_name(Me);
+	?manager(Manager);
+	.send(Manager,tell,done(Me)).
 
 +!prepare_for_death
 <-.my_name(Me);

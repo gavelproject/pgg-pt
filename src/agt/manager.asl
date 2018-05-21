@@ -48,6 +48,8 @@ current_round(0).
 		!run_round;
 		!wait_until_all_done;
 		!kill_players_in_death_row;
+		.broadcast(achieve,log_data);
+		!wait_until_all_done;
 		!clear_pools;
 	}
 	.stopMAS.

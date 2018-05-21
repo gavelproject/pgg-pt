@@ -19,7 +19,7 @@
 	<sanctions>
 		<sanction id="punishment">
 			<activation>
-				current_round(Round) &amp;
+				not sanctions_credit(0) &amp;
 				not .my_name(Target) &amp;
 				cost_to_punish(Cost) &amp;
 				tokens(Tokens) &amp;
@@ -37,7 +37,7 @@
 		</sanction>
 		<sanction id="gossip">
 			<activation>
-				not gossips_credit(0) &amp;
+				not sanctions_credit(0) &amp;
 				not .my_name(Target) &amp;
 				not players_in_other_groups([]) &amp;
 				overall_img(Target,Img) &amp;

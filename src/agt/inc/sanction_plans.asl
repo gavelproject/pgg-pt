@@ -6,15 +6,15 @@
         }
         ?cost_being_punished(Cost);
         ?tokens(OldAmount);
-        -+tokens(OldAmount-Cost).
+        -+tokens(OldAmount-Cost);
+	?tokens(T).
 
 +!gossip(Target,ImgValue)
 <-?players_in_other_groups(ReceiverOptions);
-	jia.random_int(0,.length(ReceiverOptions),I);
+	math.random_int(0,.length(ReceiverOptions),I);
 	.nth(I,ReceiverOptions,Receiver);
 	.send(Receiver,tell,gossip(Target,ImgValue));
 	!add_applied_sanction(Target,gossip);
-	!decrement_gossips_credit;
 	!decrement_pending_sanctions.
 
 +!punish(Target)

@@ -4,8 +4,8 @@
 	!estimate_incomes;
 	?defect_utility(MuD);
 	?cooperate_utility(MuC);
-	jia.abs(MuD,MuDAbs);
-	jia.abs(MuC,MuCAbs);
+	math.abs(MuD,MuDAbs);
+	math.abs(MuC,MuCAbs);
 
 	// Normalisation
 	MuDN = (MuD/(1+MuDAbs)+1)/2;
@@ -15,10 +15,10 @@
 
 	if ( .random(N) & N < ProbCoop ) {
 		-+move(cooperate);
-		contribute(1);
+		!contribute(1);
 	} else {
 		-+move(defect);
-		contribute(0);
+		!contribute(0);
 	}.
 
 +?cooperate_utility(Mu)
@@ -87,12 +87,11 @@
 
 +!sum_prob_being_punished([H|T],Sum)
 <-	!sum_prob_being_punished(T,PartialSum);
-	?punishments_received(H,P);
 	?defections_towards(H,D);
 	if (D == 0) {
-		.random(X);
-		Sum = X + PartialSum;
+		Sum = 0.5 + PartialSum;
 	} else {
+		?punishments_received(H,P);
 		Sum = P/D + PartialSum;
 	}.
 
@@ -101,12 +100,17 @@
 +!play_move
 : move_strategy(cooperator)
 <-	-+move(cooperate);
-	contribute(1).
+	!contribute(1).
 
 +!play_move
 : move_strategy(freerider)
 <-	-+move(defect);
-	contribute(0).
+	!contribute(0).
+
++!contribute(C)
+<-	?tokens(T);
+	-+tokens(T-C);
+	contribute(C).
 
 +?freeriders_ratio(FRRatio)
 <-	?freerider_mates(NumFrs);
