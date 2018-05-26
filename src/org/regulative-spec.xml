@@ -39,10 +39,7 @@
 			<activation>
 				not sanctions_credit(0) &amp;
 				not .my_name(Target) &amp;
-				not players_in_other_groups([]) &amp;
-				overall_img(Target,Img) &amp;
-				min_img_cooperator(MinCoop) &amp;
-				Img &lt; MinCoop
+				not players_in_other_groups([])
 			</activation>
 			<category>
 				<purpose>punishment</purpose>
@@ -52,7 +49,7 @@
 				<polarity>negative</polarity>
 				<discernability>unnoticeable</discernability>
 			</category>
-			<content>gossip(Target,Img)</content>
+			<content>gossip(Target)</content>
 			</sanction>
 		</sanctions>
 	<ns-links>

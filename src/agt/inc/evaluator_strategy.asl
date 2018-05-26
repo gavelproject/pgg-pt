@@ -50,7 +50,7 @@
 	norm(_,_,_,_,target(Target),_,_,_),Options,[Sanction]
 )
 : sanction_decision_strategy(threshold)
-<-?overall_img(Target,Threshold);
+<-?image(Target,Threshold);
 	.random(X);
 	if (X < Threshold) {
 		S = gossip;

@@ -9,11 +9,11 @@
         -+tokens(OldAmount-Cost);
 	?tokens(T).
 
-+!gossip(Target,ImgValue)
++!gossip(Target)
 <-?players_in_other_groups(ReceiverOptions);
 	math.random_int(0,.length(ReceiverOptions),I);
 	.nth(I,ReceiverOptions,Receiver);
-	.send(Receiver,tell,gossip(Target,ImgValue));
+	.send(Receiver,tell,gossip(Target));
 	!add_applied_sanction(Target,gossip);
 	!decrement_pending_sanctions.
 

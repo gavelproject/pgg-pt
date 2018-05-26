@@ -4,6 +4,8 @@
 	!estimate_incomes;
 	?defect_utility(MuD);
 	?cooperate_utility(MuC);
+	-income_cooperation(_,_);
+	-income_defect(_,_);
 	math.abs(MuD,MuDAbs);
 	math.abs(MuC,MuCAbs);
 
@@ -55,7 +57,8 @@
 <-	?benefit_factor(Phi);
 	?cooperation_cost(C);
 	.count(pool_member(Player),GroupSize);
-	?freerider_mates(NumFreeriders)
+	?freerider_mates(Freeriders);
+	.length(Freeriders,NumFreeriders);
 	?current_round(T);
 
 	!income_cooperation(Phi,C,GroupSize,NumFreeriders,Ic);
@@ -71,14 +74,6 @@
 <-	?prob_being_punished(Rho);
 	?cost_being_punished(Delta);
 	Id = Phi*C*(GroupSize-1-NumFreeriders)/GroupSize-(GroupSize-1)*Rho*Delta.
-
-+?freerider_mates(NFreeriders)
-<-	?min_img_cooperator(MinImgCoop);
-	.count(	pool_member(Player) &
-			overall_img(Player,ImgValue) &
-			ImgValue < MinImgCoop,
-		NFreeriders
-	).
 
 +?prob_being_punished(PBP)
 <-	.findall(P,pool_member(P) & not .my_name(P),PoolMates);
@@ -113,7 +108,7 @@
 	contribute(C).
 
 +?freeriders_ratio(FRRatio)
-<-	?freerider_mates(NumFrs);
+<-	?num_freerider_mates(NumFrs);
 	// GroupSize-1 = group size without me
 	.count(pool_member(_),GroupSize);
 	FRRatio = NumFrs/(GroupSize-1).

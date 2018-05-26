@@ -11,10 +11,10 @@ tokens(50).
 min_img_cooperator(0.6).
 
 /** Maximum percentage of mates that may be sanctioned per round. */
-max_sanction_ratio(0.75).
+max_sanction_ratio(1).
 
 /** [gossip|punishment|random|threshold] */
-sanction_decision_strategy(punishment).
+sanction_decision_strategy(threshold).
 
 /** The two weights below should sum up to 1. */
 weight_interaction_img(0.6).
@@ -31,7 +31,6 @@ pending_sanctions(0).
 
 +!start
 <-!create_de_facto;
-	!create_img_db;
 	!acquire_capabilities;
 	!ready_to_play.
 
@@ -41,15 +40,6 @@ pending_sanctions(0).
 	makeArtifact(DfName,"gavel.jacamo.DeFacto",[],DfId);
 	focus(DfId);
 	?focused(pgg,_,DfId).
-
-+!create_img_db
-<-.my_name(Me);
-	.concat(Me,".img_db",DbName);
-	?weight_gossip_img(WG);
-	?weight_interaction_img(WI);
-	makeArtifact(DbName,"pgg.ImageDb",[WG,WI],DbId);
-	focus(DbId);
-	?focused(pgg,_,DbId).
 
 +!acquire_capabilities
 <-?focused(_,capability_board,_);
@@ -84,7 +74,9 @@ pending_sanctions(0).
 	-+players_in_other_groups(Result).
 
 +pool_status("RUNNING")
-<-!update_players_in_other_groups;
+<-!incorporate_transmissions;
+	!identify_freerider_mates;
+	!update_players_in_other_groups;
 	.count(pool_member(_),NumPlayers);
 	?max_sanction_ratio(MaxSanctionRatio);
 	math.floor((NumPlayers-1)*MaxSanctionRatio,SanctionsCredit);
@@ -101,18 +93,51 @@ pending_sanctions(0).
 	-+tokens(T+Payoff).
 
 +pool_status("FINISHED")[artifact_id(PoolId)]
-<-!update_imgs;
+<-	.setof(contribution(P,V), contribution(P,V) & not .my_name(P), L);
+	!update_images_history(L);
 	!detect_normative_events;
-
 	// Wait for all sanctions to be applied
 	.wait(pending_sanctions(0));
 	!done_playing(PoolId).
 
-+!update_imgs
-<-?current_round(Round);
-	for ( contribution(Player,Value) & not .my_name(Player) ) {
-		addInteraction(Player,Round,Value);
++!update_images_history([contribution(Player,Value)|T])
+:	history(Player,Coops,Rounds)
+<-	!update_images_history(T);
+	.abolish(history(Player,Coops,Rounds));
+	+history(Player,Coops+Value,Rounds+1);
+	!save_image(Player,Coops+Value,Rounds+1).
+
++!update_images_history([contribution(Player,Value)|T])
+<-	!update_images_history(T);
+	+history(Player,Value,1);
+	!save_image(Player,Value,1).
+
++!update_images_history([]).
+
++!incorporate_transmissions
+<-	for ( gossip(Player) ) {
+		?history(Player,Coops,Rounds);
+		-+history(Player,Coops,Rounds+1);
+		.abolish(gossip(Player));
 	}.
+
++!identify_freerider_mates
+<-	P = freerider_mates(Freeriders);
+	if ( not P ) {
+		?min_img_cooperator(MinImgCoop);
+		.setof(	Player,
+			pool_member(Player) &
+				image(Player,ImgValue) &
+				ImgValue < MinImgCoop,
+			Freeriders
+		);
+		+P;
+	}.
+
++!save_image(Player,Coops,Rounds)
+<-Value = Coops/Rounds;
+	-image(Player,_);
+	+image(Player,Value).
 
 +!increment_pending_sanctions
 <-?pending_sanctions(N);
@@ -139,6 +164,7 @@ pending_sanctions(0).
 	?tokens(Wealth);
 	?move(Move);
 	?focused(_,PoolName[_],PoolId);
+	
 	.print(
 		Round,",",
 		Me,",",
@@ -151,6 +177,7 @@ pending_sanctions(0).
 +!done_log(PoolId)
 <-	stopFocus(PoolId);
 	.abolish(focused(_,_,PoolId));
+	-freerider_mates(_);
 	.my_name(Me);
 	?manager(Manager);
 	.send(Manager,tell,done(Me)).
@@ -163,9 +190,6 @@ pending_sanctions(0).
 	.concat(Me,".de_facto",DfName);
 	lookupArtifact(DfName,DfId);
 	disposeArtifact(DfId).
-
-// (T)arget, (V)alue, (S)ender
-+gossip(T,V)[source(S)] <- putGossip(T,S,V).
 
 { include("controller_strategy.asl") }
 { include("detector_strategy.asl") }
