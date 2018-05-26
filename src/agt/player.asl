@@ -2,7 +2,7 @@
 benefit_factor(3).
 cooperation_cost(1).
 cost_to_punish(0.05).
-cost_being_punished(0.5).
+cost_being_punished(1.25).
 gain_loss_utility_coeff(1).
 loss_aversion_coeff(2.25).
 tokens(12.5).
@@ -198,9 +198,6 @@ pending_sanctions(0).
 
 +!prepare_for_death
 <-.my_name(Me);
-	.concat(Me,".img_db",ImgDbName);
-	lookupArtifact(ImgDbName,ImgDbId);
-	disposeArtifact(ImgDbId);
 	.concat(Me,".de_facto",DfName);
 	lookupArtifact(DfName,DfId);
 	disposeArtifact(DfId).
