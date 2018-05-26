@@ -1,26 +1,22 @@
 //////////////////// BEGIN SIMULATION PARAMETERS ////////////////////
 benefit_factor(3).
 cooperation_cost(1).
-cost_to_punish(0.25).
-cost_being_punished(1.25).
+cost_to_punish(0.05).
+cost_being_punished(0.5).
 gain_loss_utility_coeff(1).
 loss_aversion_coeff(2.25).
-tokens(50).
+tokens(12.5).
 
 /** Minimal image value to consider an agent as cooperator. */
 min_img_cooperator(0.6).
 
 /** Maximum percentage of mates that may be sanctioned per round. */
-max_sanction_ratio(1).
+max_sanction_ratio(0.75).
 
 /** [gossip|punishment|random|threshold] */
 sanction_decision_strategy(threshold).
 
-/** The two weights below should sum up to 1. */
-weight_interaction_img(0.6).
-weight_gossip_img(0.4).
 /////////////////// END SIMULATION PARAMETERS /////////////////////
-
 /* INITIAL BELIEFS */
 current_round(0).
 manager(manager).
@@ -93,7 +89,7 @@ pending_sanctions(0).
 	-+tokens(T+Payoff).
 
 +pool_status("FINISHED")[artifact_id(PoolId)]
-<-	.setof(contribution(P,V), contribution(P,V) & not .my_name(P), L);
+<-	.findall(contribution(P,V), contribution(P,V) & not .my_name(P), L);
 	!update_images_history(L);
 	!detect_normative_events;
 	// Wait for all sanctions to be applied
@@ -116,8 +112,12 @@ pending_sanctions(0).
 
 +!incorporate_transmissions
 <-	for ( gossip(Player) ) {
-		?history(Player,Coops,Rounds);
-		-+history(Player,Coops,Rounds+1);
+		P = history(Player,Coops,Rounds);
+		if ( P ) {
+			-+history(Player,Coops,Rounds+1);
+		} else {
+			+history(Player,0,1);
+		}
 		.abolish(gossip(Player));
 	}.
 

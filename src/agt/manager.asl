@@ -51,8 +51,8 @@ current_round(0).
 		.broadcast(achieve,log_data);
 		!wait_until_all_done;
 		!clear_pools;
-	}.
-	//.stopMAS.
+	}
+	.stopMAS.
 
 +!increment_round
 <-?current_round(OldRound);
