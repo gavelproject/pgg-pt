@@ -164,13 +164,27 @@ pending_sanctions(0).
 	?tokens(Wealth);
 	?move(Move);
 	?focused(_,PoolName[_],PoolId);
+	?freerider_mates(Freeriders);
+	.findall(
+		Target,
+		applied_sanction(Target,gossip,Round),
+		GossipTargets
+	);
+	.findall(
+		Target,
+		applied_sanction(Target,punishment,Round),
+		PunishmentTargets
+	);
 	
 	.print(
 		Round,",",
 		Me,",",
 		Wealth,",",
 		Move,",",
-		PoolName
+		PoolName,",",
+		"\"",Freeriders,"\",",
+		"\"",GossipTargets,"\",",
+		"\"",PunishmentTargets,"\""
 	);
 	!done_log(PoolId).
 
